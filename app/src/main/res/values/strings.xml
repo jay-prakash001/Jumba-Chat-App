@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Chat app</string>
+    <string name="get_started">Get started with Chat App</string>
+    <string name="login">Login</string>
+    <string name="submit">Submit</string>
+    <string name="phone_lbl">Enter your phone</string>
+    <string name="bio_lbl">Enter your Bio</string>
+    <string name="dev_details">by JP</string>
+</resources>
