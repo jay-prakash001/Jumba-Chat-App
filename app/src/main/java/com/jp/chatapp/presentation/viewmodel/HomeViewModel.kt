@@ -38,16 +38,16 @@ class HomeViewModel(
         }
     }
 
-    fun join(token: String) {
-        viewModelScope.launch {
-
-            if (!webSocketManager.socket.isActive)
-                webSocketManager.join(token)
-        }
-        receiveChatList()
-        println("join $token")
-        getChatList(token = token)
-    }
+//    fun join(token: String, firebaseToken : String) {
+//        viewModelScope.launch {
+//
+//            if (!webSocketManager.socket.isActive)
+//                webSocketManager.join(token, firebaseToken)
+//        }
+//        receiveChatList()
+//        println("join $token")
+//        getChatList(token = token)
+//    }
 
     fun receiveChatList() {
 

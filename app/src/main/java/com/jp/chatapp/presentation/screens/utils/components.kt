@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -83,7 +84,8 @@ fun ChatListItem(modifier: Modifier = Modifier, chatUserInfo: ChatUserInfo, onCl
 
                     Text(
                         timeFormatter(chatUserInfo.lastChat.time) + " : " + if (chatUserInfo.lastChat.content.isNotBlank() &&
-                            chatUserInfo.lastChat.content.length > 40) chatUserInfo.lastChat.content.trim()
+                            chatUserInfo.lastChat.content.length > 40
+                        ) chatUserInfo.lastChat.content.trim()
                             .substring(0, 30) else chatUserInfo.lastChat.content.trim(),
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 12.sp,
@@ -153,43 +155,69 @@ fun ContactListItem(modifier: Modifier = Modifier, contact: ContactUserInfo, onC
 
 
 @Composable
-fun SendChat(modifier: Modifier = Modifier, time: String, bio: String, content: String) {
-    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+fun SendChat(
+    modifier: Modifier = Modifier,
+    time: String,
+    bio: String,
+    content: String,
+    isSent: Boolean
+) {
 
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = if (isSent) Arrangement.End else Arrangement.Start
+    ) {
 
+        val bg =
+            if (isSent) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.secondaryContainer
+
+        val contentColor =
+            if (isSent) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSecondaryContainer
         Row(
             modifier = Modifier
                 .wrapContentWidth()
+                .widthIn(70.dp,350.dp)
                 .padding(horizontal = 10.dp, vertical = 2.dp)
 
                 .clip(
                     RoundedCornerShape(
                         bottomStart = 15.dp,
-                        bottomEnd = 0.dp,
-                        topStart = 15.dp,
+                        bottomEnd = if (isSent) 0.dp else 15.dp,
+                        topStart = if (isSent) 15.dp else 0.dp,
                         topEnd = 15.dp
                     )
                 )
 
-                .background(MaterialTheme.colorScheme.secondary),
+                .background(
+                    bg
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End,
         ) {
             Column(
                 modifier = Modifier
                     .padding(vertical = 5.dp, horizontal = 10.dp)
-                    .wrapContentWidth()
+                    .wrapContentWidth() .widthIn(50.dp,350.dp)
             ) {
                 Text(
                     bio,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSecondary
+                    color = contentColor
                 )
                 Text(
                     content,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSecondary
+                    color = contentColor
                 )
+                Row(modifier  = Modifier.wrapContentWidth(),
+                    horizontalArrangement = Arrangement.End) {
+                    Text(
+                        timeFormatter(time),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontSize = 8.sp,
+                        color = contentColor
+                    )
+                }
 
             }
         }
@@ -205,6 +233,7 @@ fun ReceivedChat(modifier: Modifier = Modifier, time: String, bio: String, conte
         Row(
             modifier = Modifier
                 .wrapContentWidth()
+                .widthIn(80.dp)
                 .padding(horizontal = 10.dp, vertical = 2.dp)
 
                 .clip(
@@ -218,7 +247,7 @@ fun ReceivedChat(modifier: Modifier = Modifier, time: String, bio: String, conte
 
                 .background(MaterialTheme.colorScheme.primaryContainer),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End,
+            horizontalArrangement = Arrangement.Start,
         ) {
             Column(
                 modifier = Modifier
@@ -233,6 +262,12 @@ fun ReceivedChat(modifier: Modifier = Modifier, time: String, bio: String, conte
                 Text(
                     content,
                     style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    timeFormatter(time),
+                    style = MaterialTheme.typography.labelSmall,
+                    fontSize = 8.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
 

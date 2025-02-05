@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "2.0.21"
 
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -84,4 +85,10 @@ dependencies {
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.logging)
 
+
+    implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
+
+
+
+    implementation("com.google.firebase:firebase-messaging")
 }

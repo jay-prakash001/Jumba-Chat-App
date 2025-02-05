@@ -193,16 +193,23 @@ fun ChatScreen(
                 items(chats.value) { it ->
                     val chat = it.collectAsStateWithLifecycle().value
                     if (chat.chat.receiver != receiver.receiver) {
-                        ReceivedChat(
+//                        ReceivedChat(
+//                            time = chat.chat.createdAt,
+//                            content = chat.chat.content,
+//                            bio = chat.senderBio
+//                        )
+                        SendChat(
                             time = chat.chat.createdAt,
                             content = chat.chat.content,
-                            bio = chat.senderBio
+                            bio = chat.senderBio,
+                            isSent =  false
                         )
                     } else {
                         SendChat(
                             time = chat.chat.createdAt,
                             content = chat.chat.content,
-                            bio = "You"
+                            bio = "You",
+                           isSent =  true
                         )
 
                     }

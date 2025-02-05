@@ -2,6 +2,8 @@ package com.jp.chatapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import com.jp.chatapp.data.websocket.WebSocketManager
 import com.jp.chatapp.domain.repo.DataStore
 import com.jp.chatapp.domain.state.ResultState
@@ -10,12 +12,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class MainViewmodel(
     private val dataStore: DataStore,
     private val webSocketManager: WebSocketManager
 ) : ViewModel() {
-
+    private val _firebaseNotificationToken = MutableStateFlow("")
     private val _accessToken = MutableStateFlow<ResultState<String?>>(ResultState.Loading)
 //    val accessToken = _accessToken.onStart {
 //    getToken(ACCESS_TOKEN, false)
@@ -32,9 +35,16 @@ class MainViewmodel(
 
         println("main created")
         getToken(ACCESS_TOKEN, false)
+        getFirebaseNotificationToken()
 
     }
 
+
+    fun getFirebaseNotificationToken(){
+        viewModelScope.launch {
+           _firebaseNotificationToken.value= Firebase.messaging.token.await()
+        }
+    }
     fun getToken(key: String, isRefreshToken: Boolean) {
         viewModelScope.launch {
             dataStore.getToken(key).collectLatest { it ->
@@ -79,7 +89,9 @@ class MainViewmodel(
                     is ResultState.Success -> {
 
                         if (!it.data.isNullOrBlank()) {
-                            webSocketManager.join(it.data)
+                            val fcmtoken = Firebase.messaging.token.await()
+                            println("fcmToken $fcmtoken")
+                            webSocketManager.join(it.data,fcmtoken)
                             println("joined")
                         }
 

@@ -9,6 +9,7 @@ import com.example.compose.AppTheme
 import com.jp.chatapp.domain.state.ResultState
 import com.jp.chatapp.presentation.navigation.App
 import com.jp.chatapp.presentation.screens.SplashScreen
+import com.jp.chatapp.presentation.utils.requestPermission
 import com.jp.chatapp.presentation.viewmodel.ChatViewModel
 import com.jp.chatapp.presentation.viewmodel.HomeViewModel
 import com.jp.chatapp.presentation.viewmodel.MainViewmodel
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
     private val homeViewModel: HomeViewModel by inject<HomeViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        requestPermission(this, this)
         enableEdgeToEdge()
         setContent {
 

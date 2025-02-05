@@ -31,9 +31,13 @@ class WebSocketManager {
 //        socket.emit("disconnect")
         socket.disconnect()
     }
-    fun join(token: String) {
+    fun join(token: String, firebaseMessagingToken : String) {
 //        println("token $token")
-        socket.emit("join", token)
+        val json = JSONObject().apply {
+            put("token",token)
+            put("firebaseNotificationToken",firebaseMessagingToken)
+        }
+        socket.emit("join", json)
     }
 
     fun getChatList(token : String){
