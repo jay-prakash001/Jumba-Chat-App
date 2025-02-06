@@ -1,10 +1,9 @@
-package com.jp.chatapp.domain.repo
+package com.jp.chatapp.old
 
-import com.jp.chatapp.domain.models.contactList.ContactRes
-import com.jp.chatapp.domain.models.contactList.SingleContact
-import com.jp.chatapp.domain.models.user2.Contact
-import com.jp.chatapp.domain.models.user2.User
-import com.jp.chatapp.domain.state.ResultState
+import com.jp.chatapp.old.domain.models.contactList.ContactRes
+import com.jp.chatapp.old.domain.models.contactList.SingleContact
+import com.jp.chatapp.old.domain.models.user2.User
+import com.jp.chatapp.old.domain.state.ResultState
 import kotlinx.coroutines.flow.Flow
 
 interface APIDataRepo {

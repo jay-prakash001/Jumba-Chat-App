@@ -1,4 +1,4 @@
-package com.jp.chatapp.data.repoImpl.ktor
+package com.jp.chatapp.old.data.repoImpl.ktor
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO

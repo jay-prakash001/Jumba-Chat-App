@@ -1,6 +1,6 @@
-package com.jp.chatapp.domain.repo
+package com.jp.chatapp.old
 
-import com.jp.chatapp.domain.state.ResultState
+import com.jp.chatapp.old.domain.state.ResultState
 import kotlinx.coroutines.flow.Flow
 
 interface DataStore {

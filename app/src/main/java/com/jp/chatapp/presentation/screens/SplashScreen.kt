@@ -1,4 +1,4 @@
-package com.jp.chatapp.presentation.screens
+package com.jp.chatapp.old.presentation.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,18 +12,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.jp.chatapp.R
-import com.jp.chatapp.presentation.navigation.HomeRoute
-import com.jp.chatapp.presentation.navigation.Login
-import com.jp.chatapp.presentation.viewmodel.MainViewmodel
-import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(

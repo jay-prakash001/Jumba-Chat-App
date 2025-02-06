@@ -1,4 +1,4 @@
-package com.jp.chatapp.presentation.screens
+package com.jp.chatapp.old.presentation.screens
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult

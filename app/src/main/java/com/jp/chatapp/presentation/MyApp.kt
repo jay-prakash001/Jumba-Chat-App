@@ -1,7 +1,7 @@
-package com.jp.chatapp.presentation
+package com.jp.chatapp.old
 
 import android.app.Application
-import com.jp.chatapp.domain.module.appModule
+import com.jp.chatapp.old.domain.module.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

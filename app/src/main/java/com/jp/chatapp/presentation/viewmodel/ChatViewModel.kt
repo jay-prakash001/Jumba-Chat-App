@@ -1,10 +1,10 @@
-package com.jp.chatapp.presentation.viewmodel
+package com.jp.chatapp.old.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jp.chatapp.data.websocket.WebSocketManager
-import com.jp.chatapp.domain.models.chatList.ChatUserInfo
-import com.jp.chatapp.domain.models.personalChat.PersonalChat
+import com.jp.chatapp.old.data.websocket.WebSocketManager
+import com.jp.chatapp.old.domain.models.chatList.ChatUserInfo
+import com.jp.chatapp.old.domain.models.personalChat.PersonalChat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

@@ -1,7 +1,7 @@
-package com.jp.chatapp.data.websocket
+package com.jp.chatapp.old.data.websocket
 
-import com.jp.chatapp.domain.models.chatList.ChatUserInfo
-import com.jp.chatapp.domain.models.personalChat.PersonalChat
+import com.jp.chatapp.old.domain.models.chatList.ChatUserInfo
+import com.jp.chatapp.old.domain.models.personalChat.PersonalChat
 import io.socket.client.IO
 import io.socket.client.Socket
 import kotlinx.serialization.json.Json

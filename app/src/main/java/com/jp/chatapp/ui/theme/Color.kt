@@ -1,4 +1,4 @@
-package com.jp.chatapp.ui.theme
+package com.jp.chatapp.old.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

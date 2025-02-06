@@ -1,4 +1,4 @@
-package com.jp.chatapp.presentation.screens
+package com.jp.chatapp.old.presentation.screens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.jp.chatapp.presentation.screens.homeScreens.ContactsPage
 import com.jp.chatapp.presentation.screens.homeScreens.HomePage

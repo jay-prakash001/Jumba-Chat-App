@@ -1,16 +1,18 @@
-package com.jp.chatapp.presentation.viewmodel
+package com.jp.chatapp.old.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
-import com.jp.chatapp.data.websocket.WebSocketManager
-import com.jp.chatapp.domain.repo.DataStore
-import com.jp.chatapp.domain.state.ResultState
+import com.jp.chatapp.old.data.websocket.WebSocketManager
+import com.jp.chatapp.old.DataStore
+import com.jp.chatapp.old.domain.state.ResultState
 import com.jp.chatapp.utils.ACCESS_TOKEN
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -20,22 +22,22 @@ class MainViewmodel(
 ) : ViewModel() {
     private val _firebaseNotificationToken = MutableStateFlow("")
     private val _accessToken = MutableStateFlow<ResultState<String?>>(ResultState.Loading)
-//    val accessToken = _accessToken.onStart {
-//    getToken(ACCESS_TOKEN, false)
-//    }.stateIn(
-//        viewModelScope,
-//        SharingStarted.WhileSubscribed(0),
-//        ""
-//    )
+    val accessToken = _accessToken.onStart {
+    getToken(ACCESS_TOKEN, false)
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(0),
+        ""
+    )
 
-    val accessToken = _accessToken.asStateFlow()
+//    val accessToken = _accessToken.asStateFlow()
 
 
     init {
 
-        println("main created")
-        getToken(ACCESS_TOKEN, false)
-        getFirebaseNotificationToken()
+//        println("main created")
+//        getToken(ACCESS_TOKEN, false)
+//        getFirebaseNotificationToken()
 
     }
 
@@ -84,23 +86,23 @@ class MainViewmodel(
         viewModelScope.launch {
             accessToken.collectLatest { it ->
 
-                when (it) {
-
-                    is ResultState.Success -> {
-
-                        if (!it.data.isNullOrBlank()) {
-                            val fcmtoken = Firebase.messaging.token.await()
-                            println("fcmToken $fcmtoken")
-                            webSocketManager.join(it.data,fcmtoken)
-                            println("joined")
-                        }
-
-                    }
-
-                    else -> {
-
-                    }
-                }
+//                when (it) {
+//
+//                    is ResultState.Success -> {
+//
+//                        if (!it.data.isNullOrBlank()) {
+//                            val fcmtoken = Firebase.messaging.token.await()
+//                            println("fcmToken $fcmtoken")
+//                            webSocketManager.join(it.data,fcmtoken)
+//                            println("joined")
+//                        }
+//
+//                    }
+//
+//                    else -> {
+//
+//                    }
+//                }
 
             }
 
@@ -111,17 +113,17 @@ class MainViewmodel(
     fun removeSocket() {
         viewModelScope.launch {
             accessToken.collectLatest {
-                when (it) {
-                    is ResultState.Success -> {
-                        if (it.data != null) {
-                            webSocketManager.removeCon(it.data)
-                        }
-                    }
-
-                    else -> {
-                        println("remove Socket $it")
-                    }
-                }
+//                when (it) {
+//                    is ResultState.Success -> {
+//                        if (it.data != null) {
+//                            webSocketManager.removeCon(it.data)
+//                        }
+//                    }
+//
+//                    else -> {
+//                        println("remove Socket $it")
+//                    }
+//                }
 
             }
         }

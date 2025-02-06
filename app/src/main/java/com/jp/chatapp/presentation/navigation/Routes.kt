@@ -1,4 +1,4 @@
-package com.jp.chatapp.presentation.navigation
+package com.jp.chatapp.old
 
 import kotlinx.serialization.Serializable
 @Serializable

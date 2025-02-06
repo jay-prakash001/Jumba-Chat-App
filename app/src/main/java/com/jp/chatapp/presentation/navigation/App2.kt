@@ -1,6 +1,7 @@
 package com.jp.chatapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,7 +28,7 @@ fun App(
     val navController = rememberNavController()
 //        val mainViewmodel = getViewModel<MainViewmodel>()
 //        val homeViewModel = getViewModel<HomeViewModel>()
-//        val accessToken = mainViewmodel.accessToken.collectAsState().value
+        val accessToken0 = mainViewmodel.accessToken.collectAsState().value
 
 
     val startDestination = if (accessToken != null) HomeRoute(accessToken) else Login

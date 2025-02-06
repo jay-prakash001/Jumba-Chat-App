@@ -1,11 +1,11 @@
-package com.jp.chatapp.presentation.viewmodel
+package com.jp.chatapp.old.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jp.chatapp.domain.models.user2.User
-import com.jp.chatapp.domain.repo.APIDataRepo
-import com.jp.chatapp.domain.state.ResultState
-import com.jp.chatapp.learning.dataStore.DataStorePref
+import com.jp.chatapp.old.domain.models.user2.User
+import com.jp.chatapp.old.APIDataRepo
+import com.jp.chatapp.old.domain.state.ResultState
+import com.jp.chatapp.old.dataStore.DataStorePref
 import com.jp.chatapp.utils.ACCESS_TOKEN
 import com.jp.chatapp.utils.REFRESH_TOKEN
 import kotlinx.coroutines.flow.MutableStateFlow

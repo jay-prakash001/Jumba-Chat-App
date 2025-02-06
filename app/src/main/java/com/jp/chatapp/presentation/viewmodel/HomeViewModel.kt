@@ -1,14 +1,13 @@
-package com.jp.chatapp.presentation.viewmodel
+package com.jp.chatapp.old.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jp.chatapp.data.websocket.WebSocketManager
-import com.jp.chatapp.domain.models.chatList.ChatUserInfo
-import com.jp.chatapp.domain.models.contactList.ContactRes
-import com.jp.chatapp.domain.models.contactList.ContactUserInfo
-import com.jp.chatapp.domain.repo.APIDataRepo
-import com.jp.chatapp.domain.state.ResultState
-import com.jp.chatapp.learning.dataStore.DataStorePref
+import com.jp.chatapp.old.data.websocket.WebSocketManager
+import com.jp.chatapp.old.domain.models.chatList.ChatUserInfo
+import com.jp.chatapp.old.domain.models.contactList.ContactUserInfo
+import com.jp.chatapp.old.APIDataRepo
+import com.jp.chatapp.old.domain.state.ResultState
+import com.jp.chatapp.old.dataStore.DataStorePref
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest

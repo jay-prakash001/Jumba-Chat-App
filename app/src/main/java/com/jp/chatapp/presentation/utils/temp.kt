@@ -1,4 +1,4 @@
-package com.jp.chatapp.presentation.utils
+package com.jp.chatapp.old.presentation.utils
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement

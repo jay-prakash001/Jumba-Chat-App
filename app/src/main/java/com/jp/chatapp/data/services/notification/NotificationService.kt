@@ -1,4 +1,4 @@
-package com.jp.chatapp.data.services.notification
+package com.jp.chatapp.old.data.services.notification
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
