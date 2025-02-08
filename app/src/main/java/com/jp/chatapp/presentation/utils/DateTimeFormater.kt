@@ -1,4 +1,4 @@
-package com.jp.chatapp.old.presentation.utils
+package com.jp.chatapp.presentation.utils
 
 import java.text.SimpleDateFormat
 import java.util.Date

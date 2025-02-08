@@ -1,12 +1,12 @@
-package com.jp.chatapp.old.domain.module
+package com.jp.chatapp.domain.module
 
 import androidx.datastore.preferences.preferencesDataStore
-import com.jp.chatapp.old.data.repoImpl.ktor.APIDataRepoImpl
-import com.jp.chatapp.old.data.repoImpl.ktor.DataStoreImpl
-import com.jp.chatapp.old.data.websocket.WebSocketManager
-import com.jp.chatapp.old.APIDataRepo
-import com.jp.chatapp.old.DataStore
-import com.jp.chatapp.old.dataStore.DataStorePref
+import com.jp.chatapp.data.repoImpl.ktor.APIDataRepoImpl
+import com.jp.chatapp.data.repoImpl.ktor.DataStoreImpl
+import com.jp.chatapp.data.websocket.WebSocketManager
+import com.jp.chatapp.domain.repo.APIDataRepo
+import com.jp.chatapp.domain.repo.DataStore
+import com.jp.chatapp.data.dataStore.DataStorePref
 import com.jp.chatapp.presentation.viewmodel.ChatViewModel
 import com.jp.chatapp.presentation.viewmodel.HomeViewModel
 import com.jp.chatapp.presentation.viewmodel.LoginViewmodel
@@ -26,11 +26,12 @@ val appModule = module {
     single {
         preferencesDataStore("token")
     }
+
     viewModel {
         LoginViewmodel(get(), get())
     }
     viewModel {
-        ChatViewModel(get())
+        ChatViewModel(get(), get())
     }
     viewModel {
         MainViewmodel(get(), get())

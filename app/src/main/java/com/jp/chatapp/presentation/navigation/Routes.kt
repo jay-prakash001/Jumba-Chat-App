@@ -1,4 +1,4 @@
-package com.jp.chatapp.old
+package com.jp.chatapp.presentation.navigation
 
 import kotlinx.serialization.Serializable
 @Serializable
@@ -6,6 +6,10 @@ data object Splash
 
 @Serializable
 data object Login
+
+
+@Serializable
+data object  Home
 
 @Serializable
 data class HomeRoute(val token : String = "")

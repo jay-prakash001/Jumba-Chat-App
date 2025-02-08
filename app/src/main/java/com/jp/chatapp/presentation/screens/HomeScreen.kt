@@ -1,4 +1,4 @@
-package com.jp.chatapp.old.presentation.screens
+package com.jp.chatapp.presentation.screens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.jp.chatapp.presentation.screens.homeScreens.ContactsPage
 import com.jp.chatapp.presentation.screens.homeScreens.HomePage
@@ -36,7 +37,7 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewmodel: HomeViewModel = koinViewModel(), mainViewmodel: MainViewmodel, token: String
+    viewmodel: HomeViewModel = koinViewModel(), mainViewmodel: MainViewmodel
 ) {
     val pages = listOf(
         Screens("Home Page", Icons.Filled.Home, Icons.Outlined.Home),
@@ -45,15 +46,11 @@ fun HomeScreen(
     )
     val pagerState = rememberPagerState { pages.size }
     var selectedPage by remember { mutableIntStateOf(0) }
-    LaunchedEffect(true) {
-        if (token != null) {
-            mainViewmodel.joinSocket()
-            viewmodel.getChatList(token)
-
-        }
-
-        println("joined ................ $token")
-    }
+//    LaunchedEffect(true) {
+//        mainViewmodel.joinSocket()
+//        viewmodel.getChatList()
+//
+//    }
     LaunchedEffect(selectedPage) {
         pagerState.animateScrollToPage(selectedPage)
 
@@ -84,7 +81,7 @@ fun HomeScreen(
             when (page % pages.size) {
                 0 -> HomePage(
                     navController = navController,
-                    viewModel = viewmodel, token = token,
+                    viewModel = viewmodel,
                     mainViewmodel = mainViewmodel
                 )
 
@@ -92,7 +89,6 @@ fun HomeScreen(
                 2 -> ContactsPage(
                     viewModel = viewmodel,
                     navController = navController,
-                    token = token
                 )
             }
 

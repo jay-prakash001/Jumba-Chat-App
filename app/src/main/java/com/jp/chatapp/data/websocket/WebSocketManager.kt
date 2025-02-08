@@ -1,7 +1,7 @@
-package com.jp.chatapp.old.data.websocket
+package com.jp.chatapp.data.websocket
 
-import com.jp.chatapp.old.domain.models.chatList.ChatUserInfo
-import com.jp.chatapp.old.domain.models.personalChat.PersonalChat
+import com.jp.chatapp.domain.models.chatList.ChatUserInfo
+import com.jp.chatapp.domain.models.personalChat.PersonalChat
 import io.socket.client.IO
 import io.socket.client.Socket
 import kotlinx.serialization.json.Json
@@ -25,14 +25,9 @@ class WebSocketManager {
 
     fun removeCon(token: String){
         println("hello $token")
-//        val json = JSONObject().apply {
-//            put("token",token)
-//        }
-//        socket.emit("disconnect")
         socket.disconnect()
     }
     fun join(token: String, firebaseMessagingToken : String) {
-//        println("token $token")
         val json = JSONObject().apply {
             put("token",token)
             put("firebaseNotificationToken",firebaseMessagingToken)
@@ -44,8 +39,11 @@ class WebSocketManager {
         socket.emit("chatList",token)
     }
     fun chatList( callBack: (ChatUserInfo) -> Unit){
-//        println("hello")
+        println("hello")
         socket.on("chatList"){args->
+
+            println("args ${args[0]}")
+
             try {
 
                 val json = args[0].toString()
@@ -61,7 +59,6 @@ class WebSocketManager {
 
 
     fun sendMessage(token: String, phone: String, msg: String) {
-//        println("hello")
         println(phone)
         val jsonObject = JSONObject().apply {
             put("phone", phone)
@@ -71,7 +68,6 @@ class WebSocketManager {
         socket.emit("chat", jsonObject)
     }
     fun getPreviousChats(token: String, receiverId: String) {
-//        println("socketManger getchats $token $receiverId")
         val jsonObject = JSONObject().apply {
             put("token", token)
             put("receiverId", receiverId)
@@ -106,7 +102,6 @@ class WebSocketManager {
            try {
                val json = args[0].toString()
                val item  = Json.decodeFromString<ChatUserInfo>(json)
-//            println("User : $item")
                callBack(item)
            }catch (e : Exception){
 

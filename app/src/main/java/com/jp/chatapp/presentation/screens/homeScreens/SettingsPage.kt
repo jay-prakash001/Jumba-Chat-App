@@ -1,4 +1,4 @@
-package com.jp.chatapp.old.presentation.screens.homeScreens
+package com.jp.chatapp.presentation.screens.homeScreens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

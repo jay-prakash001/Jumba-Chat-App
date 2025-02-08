@@ -1,4 +1,4 @@
-package com.jp.chatapp.old.presentation.utils
+package com.jp.chatapp.presentation.utils
 
 import android.content.Context
 import android.net.Uri

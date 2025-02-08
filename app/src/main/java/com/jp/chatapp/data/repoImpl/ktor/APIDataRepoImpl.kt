@@ -1,13 +1,14 @@
-package com.jp.chatapp.old.data.repoImpl.ktor
+package com.jp.chatapp.data.repoImpl.ktor
 
-import com.jp.chatapp.old.data.utils.URL
-import com.jp.chatapp.old.domain.models.contactList.ContactRequest
-import com.jp.chatapp.old.domain.models.contactList.ContactRes
-import com.jp.chatapp.old.domain.models.contactList.SingleContact
-import com.jp.chatapp.old.domain.models.user2.User
 //import com.jp.chatapp.domain.models.user.User
-import com.jp.chatapp.old.APIDataRepo
-import com.jp.chatapp.old.domain.state.ResultState
+import com.jp.chatapp.data.utils.URL
+import com.jp.chatapp.domain.models.LoginRequest
+import com.jp.chatapp.domain.models.contactList.ContactRequest
+import com.jp.chatapp.domain.models.contactList.ContactRes
+import com.jp.chatapp.domain.models.contactList.SingleContact
+import com.jp.chatapp.domain.models.user2.User
+import com.jp.chatapp.domain.repo.APIDataRepo
+import com.jp.chatapp.domain.state.ResultState
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
@@ -19,6 +20,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.json.JSONObject
 import java.util.UUID
 
 class APIDataRepoImpl() : APIDataRepo {
@@ -53,7 +55,7 @@ class APIDataRepoImpl() : APIDataRepo {
     override fun getContacts(token: String): Flow<ResultState<ContactRes>> = flow {
         emit(ResultState.Loading)
         try {
-            val res = HttpClient.client.get<ContactRes>("$URL/user/get_contacts"){
+            val res = HttpClient.client.get<ContactRes>("$URL/user/get_contacts") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization, "Bearer $token"
@@ -61,7 +63,7 @@ class APIDataRepoImpl() : APIDataRepo {
             }
             println("Contacts :$res")
             emit(ResultState.Success(res))
-        }catch (e : Exception){
+        } catch (e: Exception) {
             emit(ResultState.Error(e.localizedMessage))
         }
     }
@@ -92,6 +94,24 @@ class APIDataRepoImpl() : APIDataRepo {
                 emit(ResultState.Error(e.localizedMessage))
             }
         }
+
+    override fun login(phone: String): Flow<ResultState<User>> = flow {
+        emit(ResultState.Loading)
+        val data = LoginRequest(phone = phone)
+        println("DATA : $data")
+        try {
+            val res: User = HttpClient.client.post<User>("$URL/user/login") {
+                contentType(ContentType.Application.Json)
+                body = data
+            }
+
+            emit(ResultState.Success(res))
+
+            println("Login $res")
+        } catch (e: Exception) {
+            emit(ResultState.Error(e.localizedMessage))
+        }
+    }
 
 
 }

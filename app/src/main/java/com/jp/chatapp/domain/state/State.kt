@@ -1,4 +1,4 @@
-package com.jp.chatapp.old.domain.state
+package com.jp.chatapp.domain.state
 
 sealed class ResultState<out T> {
 

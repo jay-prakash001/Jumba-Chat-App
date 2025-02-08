@@ -1,4 +1,4 @@
-package com.jp.chatapp.old.domain.models.contactList
+package com.jp.chatapp.domain.models.contactList
 
 import kotlinx.serialization.Serializable
 

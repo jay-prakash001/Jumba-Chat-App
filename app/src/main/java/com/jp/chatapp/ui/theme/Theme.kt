@@ -1,5 +1,6 @@
-package com.jp.chatapp.old.ui.theme
+package com.jp.chatapp.ui.theme
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

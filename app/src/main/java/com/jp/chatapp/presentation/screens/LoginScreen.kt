@@ -1,258 +1,127 @@
-package com.jp.chatapp.old.presentation.screens
+package com.jp.chatapp.presentation.screens
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import com.jp.chatapp.R
-import com.jp.chatapp.presentation.navigation.HomeRoute
-import com.jp.chatapp.presentation.utils.getFileBytesFromUri
+import com.jp.chatapp.presentation.screens.auth.LoginPage
+import com.jp.chatapp.presentation.screens.auth.RegisterPage
+import com.jp.chatapp.presentation.viewmodel.HomeViewModel
 import com.jp.chatapp.presentation.viewmodel.LoginViewmodel
 import com.jp.chatapp.presentation.viewmodel.MainViewmodel
-import com.jp.chatapp.utils.ACCESS_TOKEN
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: LoginViewmodel = koinViewModel(),
-    mainViewmodel: MainViewmodel
+    mainViewmodel: MainViewmodel, homeViewModel: HomeViewModel
 ) {
-    val phone = viewModel.phone.collectAsStateWithLifecycle()
-    val bio = viewModel.bio.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val result = rememberSaveable {
-        mutableStateOf<Uri?>(null)
-    }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
-        result.value = it
-    }
-    val scope = rememberCoroutineScope()
-    val user = viewModel.user.collectAsStateWithLifecycle()
+    val pages = listOf("Login", "Register")
 
-    LaunchedEffect(user.value) {
-    println(user.value.toString() +  " USER ")
-        if (user.value.data != null) {
-            mainViewmodel.getToken(ACCESS_TOKEN,false)
-            navController.navigate(HomeRoute(token = user.value.data!!.data.accessToken))
-            navController.clearBackStack<HomeRoute>()
-
-        }
+    val pagerState = rememberPagerState { pages.size }
+    var selectedPage by remember {
+        mutableIntStateOf(pagerState.currentPage)
     }
 
+    LaunchedEffect(selectedPage) {
+        pagerState.animateScrollToPage(selectedPage)
 
-
+    }
+    LaunchedEffect(pagerState.currentPage) {
+        selectedPage = pagerState.currentPage
+    }
     Column(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .padding(20.dp)
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .fillMaxSize()
+            .padding(top = 80.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
 
-        Text(
-            stringResource(R.string.get_started),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 22.sp
-        )
-        Text(
-            stringResource(R.string.login),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-
-
-        Box(
+        TabRow(
+            selectedPage,
             modifier = Modifier
-                .size(200.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondaryContainer)
-                .border(
-                    2.dp,
-                    MaterialTheme.colorScheme.secondary,
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth(.8f)
+                .height(60.dp)
+                .clip(RoundedCornerShape(20.dp)),
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            divider = {}, indicator = {}
         ) {
 
-            AsyncImage(
-                result.value,
-                contentDescription = "selected profile Image",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable {
-                        launcher.launch(
-                            PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
+            pages.forEachIndexed { index, s ->
+
+                Tab(
+                    selectedPage == index,
+                    onClick = {
+                        selectedPage = index
                     },
-                contentScale = ContentScale.Crop
-            )
+                    selectedContentColor = MaterialTheme.colorScheme.primaryContainer,
+                    unselectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = s,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .background(if (selectedPage == index) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primaryContainer)
+                            .padding(horizontal = 40.dp, vertical = 20.dp),
+                        textAlign = TextAlign.Center
+                    )
 
-            IconButton(onClick = {
-                launcher.launch(
-                    PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
-            }) {
-                Icon(
-                    if (result.value != null) Icons.Rounded.Edit else Icons.Default.Add,
-                    contentDescription = "select profile image",
-                    tint = if (result.value != null) MaterialTheme.colorScheme.onSecondary
-                    else MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier
-                        .size(50.dp)
+                }
+            }
 
-                )
+
+        }
+        HorizontalPager(pagerState, modifier = Modifier.fillMaxSize()) { page: Int ->
+            when (page) {
+                0 -> {
+                    LoginPage(
+                        navController = navController,
+                        mainViewmodel = mainViewmodel,
+                        viewModel = viewModel, homeViewModel = homeViewModel
+                    )
+                }
+                else ->{
+
+                    RegisterPage(
+                        navController = navController,
+                        mainViewmodel = mainViewmodel,
+                        viewModel = viewModel
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-        OutlinedTextField(
-            value = phone.value,
-            onValueChange = { viewModel.updatePhone(it) },
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier
-                .fillMaxWidth(.9f),
-            singleLine = true,
-            maxLines = 1,
-            leadingIcon = {
-                Icon(Icons.Default.Call, contentDescription = "call icon")
-            },
-            label = {
-                Text(
-                    stringResource(R.string.phone_lbl),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall
-                )
-            },
-            placeholder = {
-                Text(
-                    stringResource(R.string.phone_lbl),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelSmall
-                )
-            }
-
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        OutlinedTextField(
-            value = bio.value,
-            onValueChange = { viewModel.updateBio(it) },
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier
-                .fillMaxWidth(.9f),
-            singleLine = true,
-            maxLines = 1,
-            leadingIcon = {
-                Icon(Icons.Default.Info, contentDescription = "info icon")
-            },
-            label = {
-                Text(
-                    stringResource(R.string.bio_lbl),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall
-                )
-            },
-            placeholder = {
-                Text(
-                    stringResource(R.string.bio_lbl),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelSmall
-                )
-            }
-
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        Button(
-            onClick = {
-
-                viewModel.register(file = getFileBytesFromUri(context, result.value!!))
-
-
-            },
-            enabled = !user.value.isLoading,
-            colors = ButtonDefaults.buttonColors(
-                disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            modifier = Modifier
-                .fillMaxWidth(.9f)
-                .height(50.dp),
-            shape = MaterialTheme.shapes.medium,
-
-            ) {
-            if (user.value.isLoading) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    trackColor = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.size(30.dp), strokeWidth = 2.dp
-                )
-            } else {
-                Text(
-                    stringResource(R.string.submit),
-                    style = MaterialTheme.typography.labelMedium
-                )
-            }
-
-        }
-
-        Spacer(Modifier.height(80.dp))
-        Text(
-            stringResource(R.string.dev_details),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.primary
-        )
 
     }
+
 }
-
-
 

@@ -1,4 +1,4 @@
-package com.jp.chatapp.old.presentation.screens
+package com.jp.chatapp.presentation.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,10 +42,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.jp.chatapp.presentation.navigation.ChatRoute
+import com.jp.chatapp.presentation.screens.utils.ReceivedChat
 import com.jp.chatapp.presentation.screens.utils.SendChat
 import com.jp.chatapp.presentation.utils.dateFormatter
 import com.jp.chatapp.presentation.utils.timeFormatter
@@ -59,21 +62,18 @@ fun ChatScreen(
     navController: NavController,
     receiver: ChatRoute,
     viewModel: ChatViewModel = koinViewModel(),
-    mainViewModel: MainViewmodel,
-    token: String?
 ) {
     val context = LocalContext.current
     val state = rememberLazyListState()
     var msg by remember {
         mutableStateOf("")
     }
-//    val token = mainViewModel.accessToken.collectAsStateWithLifecycle().value
 
     LaunchedEffect(true) {
         viewModel.receiveChats()
     }
     LaunchedEffect(Unit) {
-        viewModel.getChats(token!!, receiver.receiver)
+        viewModel.getChats(receiver.receiver)
     }
 
     val chats = viewModel.chats.collectAsStateWithLifecycle()
@@ -84,7 +84,7 @@ fun ChatScreen(
 
     LaunchedEffect(Unit) {
 
-        viewModel.getUserInfo(token = token!!, receiver.receiver)
+        viewModel.getUserInfo( receiver.receiver)
         viewModel.clearList()
 
     }
@@ -242,7 +242,6 @@ fun ChatScreen(
                     onClick = {
                         if(msg.isNotBlank()){
                             viewModel.sendMessage(
-                                token!!,
                                 receiver.phone,
                                 content = msg.trim()
                             )

@@ -1,20 +1,22 @@
-package com.jp.chatapp.old.presentation.viewmodel
+package com.jp.chatapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jp.chatapp.old.data.websocket.WebSocketManager
-import com.jp.chatapp.old.domain.models.chatList.ChatUserInfo
-import com.jp.chatapp.old.domain.models.contactList.ContactUserInfo
-import com.jp.chatapp.old.APIDataRepo
-import com.jp.chatapp.old.domain.state.ResultState
-import com.jp.chatapp.old.dataStore.DataStorePref
+import com.jp.chatapp.data.websocket.WebSocketManager
+import com.jp.chatapp.domain.models.chatList.ChatUserInfo
+import com.jp.chatapp.domain.models.contactList.ContactUserInfo
+import com.jp.chatapp.domain.repo.APIDataRepo
+import com.jp.chatapp.domain.state.ResultState
+import com.jp.chatapp.data.dataStore.DataStorePref
+import com.jp.chatapp.domain.repo.DataStore
+import com.jp.chatapp.utils.ACCESS_TOKEN
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val webSocketManager: WebSocketManager, private val dataStorePref: DataStorePref,
+    private val webSocketManager: WebSocketManager, private val dataStore: DataStore,
     private val apiDataRepo: APIDataRepo
 ) : ViewModel() {
 
@@ -26,33 +28,36 @@ class HomeViewModel(
     private val _contactList = MutableStateFlow<List<ContactUserInfo>>(emptyList())
     val contactList = _contactList.asStateFlow()
 
+
+    private val _accessToken = MutableStateFlow<String?>(null)
+    val accessToken = _accessToken.asStateFlow()
+
     init {
 
         println("created home")
+        getToken()
+//        getChatList()
     }
 
-    private fun connect() {
+    private fun getToken() {
         viewModelScope.launch {
-            webSocketManager.connect("http://10.0.2.2:9000")
+            dataStore.getTokenValue(ACCESS_TOKEN).collectLatest {
+                println("Token refreshed ")
+                _accessToken.value = it
+                receiveChatList()
+                println("receiving the chat list0")
+
+            }
         }
     }
 
-//    fun join(token: String, firebaseToken : String) {
-//        viewModelScope.launch {
-//
-//            if (!webSocketManager.socket.isActive)
-//                webSocketManager.join(token, firebaseToken)
-//        }
-//        receiveChatList()
-//        println("join $token")
-//        getChatList(token = token)
-//    }
 
     fun receiveChatList() {
-
+        println("receiving the chat list")
         viewModelScope.launch {
             webSocketManager.chatList { chatI ->
-//                println("$$$$$$$$$$$$$$$$44 $chatI")
+
+                println("chat list00 $chatI")
                 val existingItem = _chatList.value.find { it.value.phone == chatI.phone }
                 if (existingItem != null) {
                     // Update existing item inside the MutableStateFlow
@@ -63,42 +68,49 @@ class HomeViewModel(
                 }
 
             }
-            println(_chatList.value)
+            println("chat list ${_chatList.value}")
+            getChatList()
         }
     }
 
 
-    fun getChatList(token: String) {
+    fun getChatList() {
         viewModelScope.launch {
-            webSocketManager.getChatList(token)
+            if (!_accessToken.value.isNullOrBlank()) {
+
+                webSocketManager.getChatList(_accessToken.value!!)
+            }
         }
-        receiveChatList()
+//        receiveChatList()
     }
 
-    fun getContacts(token: String) {
+    fun getContacts() {
         viewModelScope.launch {
-            apiDataRepo.getContacts(token = token).collectLatest { contact ->
-                when (contact) {
-                    is ResultState.Error -> {
+            if (!_accessToken.value.isNullOrBlank()) {
+                apiDataRepo.getContacts(token = _accessToken.value!!).collectLatest { contact ->
+                    when (contact) {
+                        is ResultState.Error -> {
 
-                    }
+                        }
 
-                    ResultState.Loading -> {
+                        ResultState.Loading -> {
 
-                    }
+                        }
 
-                    is ResultState.Success -> {
+                        is ResultState.Success -> {
 
-                        _contactList.value = contact.data.data
+                            _contactList.value = contact.data.data
+                        }
                     }
                 }
             }
         }
     }
 
-    fun addContact(name: String, phone: String, token: String) {
+    fun addContact(name: String, phone: String) {
         viewModelScope.launch {
-            apiDataRepo.addUser(phone, name, token).collectLatest { newContact ->
+            if(_accessToken.value.isNullOrBlank()) return@launch
+            apiDataRepo.addUser(phone, name, _accessToken.value!!).collectLatest { newContact ->
                 when (newContact) {
                     is ResultState.Error -> {}
                     ResultState.Loading -> {}

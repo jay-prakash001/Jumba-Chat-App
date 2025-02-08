@@ -1,11 +1,12 @@
-package com.jp.chatapp.old.presentation.viewmodel
+package com.jp.chatapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jp.chatapp.old.domain.models.user2.User
-import com.jp.chatapp.old.APIDataRepo
-import com.jp.chatapp.old.domain.state.ResultState
-import com.jp.chatapp.old.dataStore.DataStorePref
+import com.jp.chatapp.domain.models.user2.User
+import com.jp.chatapp.domain.repo.APIDataRepo
+import com.jp.chatapp.domain.state.ResultState
+import com.jp.chatapp.data.dataStore.DataStorePref
+import com.jp.chatapp.domain.repo.DataStore
 import com.jp.chatapp.utils.ACCESS_TOKEN
 import com.jp.chatapp.utils.REFRESH_TOKEN
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,11 +16,11 @@ import kotlinx.coroutines.launch
 
 class LoginViewmodel(
     private val apiDataRepo: APIDataRepo,
-    private val dataStorePref: DataStorePref
+    private  val dataStore: DataStore
 ) : ViewModel() {
 
     private val _user = MutableStateFlow<UserState>(UserState())
-        val user = _user.asStateFlow()
+    val user = _user.asStateFlow()
     private val _phone = MutableStateFlow("")
     val phone = _phone.asStateFlow()
 
@@ -53,23 +54,49 @@ class LoginViewmodel(
                             _user.value = UserState(data = it.data)
 
                             println("Log : Data ${_user.value}")
-                            saveToken(ACCESS_TOKEN,it.data.data.accessToken)
-                            saveToken(REFRESH_TOKEN,it.data.data.refreshtoken)
+                            saveToken(ACCESS_TOKEN, it.data.data.accessToken)
+                            saveToken(REFRESH_TOKEN, it.data.data.refreshtoken)
                         }
                     }
                 }
         }
     }
-    fun login(){
-        viewModelScope.launch {
 
-        }
-    }
-    private fun saveToken(key: String, value: String) {
+    fun login() {
         viewModelScope.launch {
-            dataStorePref.setToken(key, value)
+            apiDataRepo.login(phone.value).collectLatest {
+                when (it) {
+                    is ResultState.Error -> {
+                        _user.value = UserState(error = it.msg)
+                    }
+
+                    ResultState.Loading -> {
+                        _user.value = UserState(isLoading = true)
+                    }
+
+                    is ResultState.Success -> {
+                        println("RES LOgin ${it.data}")
+
+                            _user.value = UserState(data = it.data)
+
+                            saveToken(ACCESS_TOKEN, it.data.data.accessToken)
+                            saveToken(REFRESH_TOKEN, it.data.data.refreshtoken)
+
+
+                    }
+                }
+            }
         }
     }
+
+     private fun saveToken(key: String, value: String) {
+        viewModelScope.launch {
+            dataStore.setToken(key, value)
+        }
+    }
+
+
+
 
 }
 
