@@ -1,5 +1,6 @@
 package com.jp.chatapp.data.websocket
 
+import com.jp.chatapp.data.utils.MessageStatus
 import com.jp.chatapp.domain.models.chatList.ChatUserInfo
 import com.jp.chatapp.domain.models.personalChat.PersonalChat
 import io.socket.client.IO
@@ -8,9 +9,9 @@ import kotlinx.serialization.json.Json
 import org.json.JSONObject
 
 
-class WebSocketManager {
+object WebSocketManager {
 
-     lateinit var socket: Socket
+     private lateinit var socket: Socket
 
     fun connect(url: String = "http://10.0.2.2:9000") {
             socket = IO.socket(url)
@@ -97,6 +98,12 @@ class WebSocketManager {
        socket.emit("getUserInfo",json)
    }
 
+    fun getProfile(token: String){
+        val json = JSONObject().apply {
+            put("token",token)
+        }
+        socket.emit("getProfile",json)
+    }
     fun receiverUserInfo(callBack: (ChatUserInfo) -> Unit){
         socket.on("getUserInfo"){args->
            try {
@@ -112,6 +119,28 @@ class WebSocketManager {
         }
     }
 
+    fun receiveProfile(callBack: (ChatUserInfo) -> Unit){
+        socket.on("getUserInfo"){
+            args->
+            val json  = args[0].toString()
+            val info = Json.decodeFromString<ChatUserInfo>(json)
+            callBack(info)
+        }
+    }
 
+
+    fun updateProfileImg(file : ByteArray, fileType : String , token: String){
+        val json = JSONObject().apply {
+            put("img", file)
+            put("fileType", fileType)
+            put("token", token)
+        }
+        socket.emit("updateProfileImg",json)
+    }
+
+
+    fun testEnum(){
+        socket.emit("mediaChat",MessageStatus.READ)
+    }
 
 }

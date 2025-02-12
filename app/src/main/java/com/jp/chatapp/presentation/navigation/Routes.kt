@@ -25,4 +25,6 @@ data class ChatRoute(val name: String,
 )
 
 @Serializable
+data class ShowImage(val img : String)
+@Serializable
 data object AddContactRoute

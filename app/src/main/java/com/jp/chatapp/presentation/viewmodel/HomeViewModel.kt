@@ -2,13 +2,12 @@ package com.jp.chatapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jp.chatapp.data.websocket.WebSocketManager
 import com.jp.chatapp.domain.models.chatList.ChatUserInfo
 import com.jp.chatapp.domain.models.contactList.ContactUserInfo
 import com.jp.chatapp.domain.repo.APIDataRepo
 import com.jp.chatapp.domain.state.ResultState
-import com.jp.chatapp.data.dataStore.DataStorePref
 import com.jp.chatapp.domain.repo.DataStore
+import com.jp.chatapp.domain.repo.SocketManagerRepo
 import com.jp.chatapp.utils.ACCESS_TOKEN
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,10 +15,15 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val webSocketManager: WebSocketManager, private val dataStore: DataStore,
+//    private val webSocketManager: WebSocketManager,
+    private val webSocketManager: SocketManagerRepo,
+
+    private val dataStore: DataStore,
     private val apiDataRepo: APIDataRepo
 ) : ViewModel() {
 
+    private val _profile = MutableStateFlow<ChatUserInfo?>(null)
+    val profile = _profile.asStateFlow()
 
     private val _chatList = MutableStateFlow<List<MutableStateFlow<ChatUserInfo>>>(emptyList())
     val chatList = _chatList.asStateFlow()
@@ -36,7 +40,6 @@ class HomeViewModel(
 
         println("created home")
         getToken()
-//        getChatList()
     }
 
     private fun getToken() {
@@ -44,6 +47,7 @@ class HomeViewModel(
             dataStore.getTokenValue(ACCESS_TOKEN).collectLatest {
                 println("Token refreshed ")
                 _accessToken.value = it
+                getProfile()
                 receiveChatList()
                 println("receiving the chat list0")
 
@@ -51,7 +55,11 @@ class HomeViewModel(
         }
     }
 
-
+    fun logout(){
+        viewModelScope.launch {
+            dataStore.setToken(ACCESS_TOKEN,null)
+        }
+    }
     fun receiveChatList() {
         println("receiving the chat list")
         viewModelScope.launch {
@@ -81,7 +89,6 @@ class HomeViewModel(
                 webSocketManager.getChatList(_accessToken.value!!)
             }
         }
-//        receiveChatList()
     }
 
     fun getContacts() {
@@ -109,7 +116,7 @@ class HomeViewModel(
 
     fun addContact(name: String, phone: String) {
         viewModelScope.launch {
-            if(_accessToken.value.isNullOrBlank()) return@launch
+            if (_accessToken.value.isNullOrBlank()) return@launch
             apiDataRepo.addUser(phone, name, _accessToken.value!!).collectLatest { newContact ->
                 when (newContact) {
                     is ResultState.Error -> {}
@@ -128,6 +135,34 @@ class HomeViewModel(
                 }
 
             }
+        }
+    }
+
+    fun getProfile() {
+        if (_accessToken.value != null) {
+            viewModelScope.launch {
+                webSocketManager.getProfile(_accessToken.value!!)
+            }
+            receiveProfile()
+        }
+
+    }
+
+    fun receiveProfile() {
+        viewModelScope.launch {
+            webSocketManager.receiveProfile {
+                _profile.value = it
+            }
+        }
+    }
+
+    fun updateProfile(file : ByteArray?, fileName: String?){
+        println("homeViewmodel token ${_accessToken.value}")
+        if (file == null || fileName.isNullOrBlank()) return
+        viewModelScope.launch {
+
+            webSocketManager.updateProfileImg(file, fileName, _accessToken.value!!)
+            getProfile()
         }
     }
 

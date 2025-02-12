@@ -6,13 +6,18 @@ import com.jp.chatapp.data.websocket.WebSocketManager
 import com.jp.chatapp.domain.models.chatList.ChatUserInfo
 import com.jp.chatapp.domain.models.personalChat.PersonalChat
 import com.jp.chatapp.domain.repo.DataStore
+import com.jp.chatapp.domain.repo.SocketManagerRepo
 import com.jp.chatapp.utils.ACCESS_TOKEN
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class ChatViewModel(private val webSocketManager: WebSocketManager, private val dataStore: DataStore) : ViewModel() {
+class ChatViewModel(
+//    private val webSocketManager: WebSocketManager,
+    private val webSocketManager: SocketManagerRepo,
+    private val dataStore: DataStore
+) : ViewModel() {
 
     private val _chats = MutableStateFlow<List<MutableStateFlow<PersonalChat>>>(emptyList())
     val chats = _chats.asStateFlow()
@@ -20,7 +25,6 @@ class ChatViewModel(private val webSocketManager: WebSocketManager, private val 
     val userInfo = _userInfo.asStateFlow()
     private val _accessToken = MutableStateFlow<String?>(null)
     val accessToken = _accessToken.asStateFlow()
-
 
 
     init {
@@ -42,10 +46,11 @@ class ChatViewModel(private val webSocketManager: WebSocketManager, private val 
             }
         }
     }
-    fun getChats( receiver: String) {
+
+    fun getChats(receiver: String) {
 //        println("get Chats $receiver")
         viewModelScope.launch {
-            if(_accessToken.value.isNullOrBlank()) return@launch
+            if (_accessToken.value.isNullOrBlank()) return@launch
             webSocketManager.getPreviousChats(_accessToken.value!!, receiver)
         }
         receiveChats()
@@ -57,7 +62,7 @@ class ChatViewModel(private val webSocketManager: WebSocketManager, private val 
     }
 
 
-     fun receiveChats() {
+    fun receiveChats() {
         viewModelScope.launch {
             webSocketManager.receiveChat { chat ->
 
@@ -73,7 +78,7 @@ class ChatViewModel(private val webSocketManager: WebSocketManager, private val 
 
     }
 
-    fun sendMessage( receiver: String, content: String) {
+    fun sendMessage(receiver: String, content: String) {
         println("phone $receiver")
         if (_accessToken.value.isNullOrBlank()) return
         viewModelScope.launch {
@@ -84,9 +89,9 @@ class ChatViewModel(private val webSocketManager: WebSocketManager, private val 
 
     }
 
-    fun getUserInfo( userId: String) {
+    fun getUserInfo(userId: String) {
         _userInfo.value = null
-        if(_accessToken.value.isNullOrBlank()) return
+        if (_accessToken.value.isNullOrBlank()) return
         viewModelScope.launch {
             webSocketManager.getUserInfo(_accessToken.value!!, userId)
         }
@@ -94,9 +99,9 @@ class ChatViewModel(private val webSocketManager: WebSocketManager, private val 
         receiverUserInfo()
     }
 
-      fun receiverUserInfo() {
+    fun receiverUserInfo() {
 
-    println("UserInfo ")
+        println("UserInfo ")
         viewModelScope.launch {
             webSocketManager.receiverUserInfo() { user ->
                 println("User :${_userInfo.value}")
@@ -106,7 +111,7 @@ class ChatViewModel(private val webSocketManager: WebSocketManager, private val 
                     if (_userInfo.value?.user_id == user.user_id) {
 
 
-                       val a = user.copy(name = _userInfo.value!!.name)
+                        val a = user.copy(name = _userInfo.value!!.name)
                         _userInfo.value = a
 
                     }

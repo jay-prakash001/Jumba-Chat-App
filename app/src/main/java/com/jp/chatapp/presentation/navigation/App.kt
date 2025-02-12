@@ -1,6 +1,5 @@
 package com.jp.chatapp.presentation.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -11,6 +10,7 @@ import com.jp.chatapp.presentation.screens.AddContactScreen
 import com.jp.chatapp.presentation.screens.ChatScreen
 import com.jp.chatapp.presentation.screens.HomeScreen
 import com.jp.chatapp.presentation.screens.LoginScreen
+import com.jp.chatapp.presentation.screens.ShowImageScreen
 import com.jp.chatapp.presentation.screens.SplashScreen
 import com.jp.chatapp.presentation.viewmodel.ChatViewModel
 import com.jp.chatapp.presentation.viewmodel.HomeViewModel
@@ -51,7 +51,7 @@ fun App(
 
             HomeScreen(
                 navController = navController,
-                viewmodel = homeViewModel,
+                homeViewModel = homeViewModel,
                 mainViewmodel = mainViewmodel
             )
         }
@@ -61,7 +61,7 @@ fun App(
             ChatScreen(
                 navController = navController,
                 receiver = receiver,
-                 viewModel = chatViewModel
+                viewModel = chatViewModel
             )
         }
 
@@ -71,6 +71,10 @@ fun App(
                 navController = navController,
             )
 
+        }
+        composable<ShowImage> {
+            val image = it.toRoute<ShowImage>().img
+            ShowImageScreen(img = image, navController = navController)
         }
 
     }

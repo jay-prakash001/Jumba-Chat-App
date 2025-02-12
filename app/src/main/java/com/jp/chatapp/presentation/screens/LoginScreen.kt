@@ -1,5 +1,7 @@
 package com.jp.chatapp.presentation.screens
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,14 +50,17 @@ fun LoginScreen(
     }
 
     LaunchedEffect(selectedPage) {
-        pagerState.animateScrollToPage(selectedPage)
+        pagerState.animateScrollToPage(
+            selectedPage,
+            animationSpec = tween(durationMillis = 700, easing = LinearOutSlowInEasing)
+        )
 
     }
     LaunchedEffect(pagerState.currentPage) {
         selectedPage = pagerState.currentPage
     }
     Column(
-        modifier = Modifier
+        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
             .fillMaxSize()
             .padding(top = 80.dp),
         verticalArrangement = Arrangement.Top,
@@ -74,7 +79,6 @@ fun LoginScreen(
         ) {
 
             pages.forEachIndexed { index, s ->
-
                 Tab(
                     selectedPage == index,
                     onClick = {
@@ -109,7 +113,8 @@ fun LoginScreen(
                         viewModel = viewModel, homeViewModel = homeViewModel
                     )
                 }
-                else ->{
+
+                else -> {
 
                     RegisterPage(
                         navController = navController,

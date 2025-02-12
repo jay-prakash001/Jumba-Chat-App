@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 
 class DataStoreImpl(private val dataStorePref: DataStorePref) : DataStore {
-    override suspend fun setToken(tokenName: String, tokenValue: String) {
+    override suspend fun setToken(tokenName: String, tokenValue: String?) {
         dataStorePref.setToken(tokenName, tokenValue)
     }
 

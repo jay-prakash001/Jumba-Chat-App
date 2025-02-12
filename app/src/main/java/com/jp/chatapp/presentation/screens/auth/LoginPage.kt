@@ -29,6 +29,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -173,7 +174,7 @@ fun LoginPage(
 
         )
         Spacer(modifier = Modifier.height(20.dp))
-        Button(
+        ElevatedButton(
             onClick = {
 
                 viewModel.login()

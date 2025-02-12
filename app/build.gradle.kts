@@ -40,6 +40,7 @@ android {
     buildFeatures {
         compose = true
     }
+
 }
 
 dependencies {
@@ -85,7 +86,21 @@ dependencies {
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.logging)
 
+//    implementation("io.ktor:ktor-client-multipart:2.3.5") // For multipart/form-data requests
 
+
+//
+//
+//
+//    val ktor_version = "2.3.5" // Use the latest version
+//
+//    implementation("io.ktor:ktor-client-core:$ktor_version")
+//    implementation("io.ktor:ktor-client-cio:$ktor_version") // Or any other engine
+//
+//    implementation("io.ktor:ktor-client-multipart:2.3.6")
+//
+//    implementation("io.ktor:ktor-client-logging:$ktor_version")
+//
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
 
 

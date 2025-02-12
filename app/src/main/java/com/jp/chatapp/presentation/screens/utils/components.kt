@@ -1,7 +1,9 @@
 package com.jp.chatapp.presentation.screens.utils
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,19 +25,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import com.jp.chatapp.domain.models.chatList.ChatUserInfo
 import com.jp.chatapp.domain.models.contactList.ContactUserInfo
 import com.jp.chatapp.domain.models.contactList.SingleContact
+import com.jp.chatapp.presentation.navigation.ShowImage
 import com.jp.chatapp.presentation.utils.timeFormatter
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun ChatListItem(modifier: Modifier = Modifier, chatUserInfo: ChatUserInfo, onClick: () -> Unit) {
-
+fun ChatListItem(modifier: Modifier = Modifier, chatUserInfo: ChatUserInfo, navController : NavController, onClick: () -> Unit) {
+val context = LocalContext.current
     Card(
         onClick = onClick,
         modifier = modifier.padding(2.dp),
@@ -53,7 +58,19 @@ fun ChatListItem(modifier: Modifier = Modifier, chatUserInfo: ChatUserInfo, onCl
                 contentDescription = chatUserInfo.name,
                 modifier = Modifier
                     .size(60.dp)
-                    .clip(CircleShape), contentScale = ContentScale.Crop
+                    .clip(CircleShape).clickable {
+                        Toast
+                            .makeText(context, "Loading Profile Image", Toast.LENGTH_SHORT)
+                            .show()
+                        if (chatUserInfo.profileImg.isNullOrBlank()) {
+                            Toast
+                                .makeText(context, "Error Loading Profile Image", Toast.LENGTH_SHORT)
+                                .show()
+                        }else{
+                            navController.navigate(ShowImage(chatUserInfo.profileImg))
+                        }
+
+                    }, contentScale = ContentScale.Crop
             )
             Column(
                 modifier = Modifier

@@ -6,6 +6,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import com.jp.chatapp.data.websocket.WebSocketManager
 import com.jp.chatapp.domain.repo.DataStore
+import com.jp.chatapp.domain.repo.SocketManagerRepo
 import com.jp.chatapp.domain.state.ResultState
 import com.jp.chatapp.utils.ACCESS_TOKEN
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,8 @@ import kotlinx.coroutines.tasks.await
 
 class MainViewmodel(
     private val dataStore: DataStore,
-    private val webSocketManager: WebSocketManager
+//    private val webSocketManager: WebSocketManager
+    private val webSocketManager: SocketManagerRepo
 ) : ViewModel() {
 
 
@@ -35,8 +37,7 @@ class MainViewmodel(
     )
 
     private val _isJoined = MutableStateFlow<Boolean>(false)
-    val isJoined = _isJoined.asStateFlow()
-    fun getToken(key: String) {
+    private fun getToken(key: String) {
         viewModelScope.launch {
 
 
@@ -114,5 +115,10 @@ class MainViewmodel(
 
 
         }
+    }
+
+
+    fun testEnum(){
+        webSocketManager.testEnum()
     }
 }

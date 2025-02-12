@@ -6,13 +6,17 @@ import com.jp.chatapp.domain.models.LoginRequest
 import com.jp.chatapp.domain.models.contactList.ContactRequest
 import com.jp.chatapp.domain.models.contactList.ContactRes
 import com.jp.chatapp.domain.models.contactList.SingleContact
+import com.jp.chatapp.domain.models.user2.ProfileUpdateResponse
 import com.jp.chatapp.domain.models.user2.User
 import com.jp.chatapp.domain.repo.APIDataRepo
 import com.jp.chatapp.domain.state.ResultState
+import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.headers
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.Headers
@@ -20,7 +24,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.json.JSONObject
 import java.util.UUID
 
 class APIDataRepoImpl() : APIDataRepo {
@@ -30,6 +33,8 @@ class APIDataRepoImpl() : APIDataRepo {
             emit(ResultState.Loading)
 
             try {
+
+
                 val res = HttpClient.client.submitFormWithBinaryData<User>(
                     url = "$URL/user/register",
                     formData {
@@ -113,6 +118,31 @@ class APIDataRepoImpl() : APIDataRepo {
         }
     }
 
+    override fun updateProfileImg(file: ByteArray, token: String): Flow<ResultState<String>> =
+        flow {
+            emit(ResultState.Loading)
+
+            try {
+            val res = HttpClient.client.patch<ProfileUpdateResponse>("$URL/user/updateProfileImg"){
+                headers {
+                    append(HttpHeaders.Authorization, "Bearer $token")
+                }
+
+                body =
+                    MultiPartFormDataContent(formData {
+                        append("file",file, Headers.build {
+                            append(HttpHeaders.ContentType, "text/plain")
+                            append(HttpHeaders.ContentDisposition, "filename=${UUID.randomUUID()}")
+                        })
+                    })
+
+            }
+
+                println(res)
+            } catch (e: Exception) {
+                emit(ResultState.Error(e.message.toString()))
+            }
+        }
 
 }
 

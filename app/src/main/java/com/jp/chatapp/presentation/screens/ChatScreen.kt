@@ -1,8 +1,12 @@
 package com.jp.chatapp.presentation.screens
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,14 +24,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,18 +48,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.jp.chatapp.R
 import com.jp.chatapp.presentation.navigation.ChatRoute
+import com.jp.chatapp.presentation.navigation.ShowImage
 import com.jp.chatapp.presentation.screens.utils.ReceivedChat
 import com.jp.chatapp.presentation.screens.utils.SendChat
+import com.jp.chatapp.presentation.utils.TexturedBackGround
 import com.jp.chatapp.presentation.utils.dateFormatter
 import com.jp.chatapp.presentation.utils.timeFormatter
 import com.jp.chatapp.presentation.viewmodel.ChatViewModel
@@ -68,7 +85,7 @@ fun ChatScreen(
     var msg by remember {
         mutableStateOf("")
     }
-
+    var isOptionsEnabled by remember { mutableStateOf(false) }
     LaunchedEffect(true) {
         viewModel.receiveChats()
     }
@@ -84,7 +101,7 @@ fun ChatScreen(
 
     LaunchedEffect(Unit) {
 
-        viewModel.getUserInfo( receiver.receiver)
+        viewModel.getUserInfo(receiver.receiver)
         viewModel.clearList()
 
     }
@@ -119,7 +136,11 @@ fun ChatScreen(
                         ) {
                             Text(user!!.name, style = MaterialTheme.typography.titleLarge)
                             Text(
-                                if (user!!.isOnline) "Online" else "Last seen : ${timeFormatter(user!!.lastSeen)} ${dateFormatter(user!!.lastSeen)}",
+                                if (user!!.isOnline) "Online" else "Last seen : ${timeFormatter(user!!.lastSeen)} ${
+                                    dateFormatter(
+                                        user!!.lastSeen
+                                    )
+                                }",
                                 style = MaterialTheme.typography.labelSmall
                             )
                         }
@@ -137,11 +158,11 @@ fun ChatScreen(
                             receiver.profileImg,
                             contentDescription = "user profile ${receiver.name}",
                             modifier = Modifier
-//                                .padding(5.dp)
                                 .size(50.dp)
                                 .clip(
                                     CircleShape
-                                ), contentScale = ContentScale.Crop
+                                )
+                                , contentScale = ContentScale.Crop
                         )
                         Column(
                             modifier = Modifier.fillMaxWidth(.8f),
@@ -172,100 +193,158 @@ fun ChatScreen(
 
 
     ) {
-        Column(
+
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(it),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(it), contentAlignment = Alignment.Center
         ) {
 
-            LazyColumn(
-                state = state,
-                modifier = Modifier
-                    .fillMaxHeight(.9f)
-                    .fillMaxWidth()
-            ) {
-                items(chats.value) { it ->
-                    val chat = it.collectAsStateWithLifecycle().value
-                    if (chat.chat.receiver != receiver.receiver) {
-//                        ReceivedChat(
-//                            time = chat.chat.createdAt,
-//                            content = chat.chat.content,
-//                            bio = chat.senderBio
-//                        )
-                        SendChat(
-                            time = chat.chat.createdAt,
-                            content = chat.chat.content,
-                            bio = chat.senderBio,
-                            isSent =  false
-                        )
-                    } else {
-                        SendChat(
-                            time = chat.chat.createdAt,
-                            content = chat.chat.content,
-                            bio = "You",
-                           isSent =  true
-                        )
 
-                    }
-                    Spacer(
-                        modifier = Modifier
-                            .height(2.dp)
-                            .background(Color.Gray)
-                    )
-                }
-            }
-            Row(
+            TexturedBackGround()
+
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 5.dp),
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize(),
+
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                OutlinedTextField(
-                    value = msg,
-                    onValueChange = { msg = it },
-                    modifier = Modifier.fillMaxWidth(.85f),
-                    shape = RoundedCornerShape(30.dp),
-                    maxLines = 3,
-                    placeholder = {
-                        Text(
-                            "Message",
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                )
-                IconButton(
-                    onClick = {
-                        if(msg.isNotBlank()){
-                            viewModel.sendMessage(
-                                receiver.phone,
-                                content = msg.trim()
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxSize(.92f),
+                    contentAlignment = Alignment.BottomEnd
+                ) {
+
+                    LazyColumn(
+                        state = state,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth()
+                    ) {
+                        items(chats.value) { it ->
+                            val chat = it.collectAsStateWithLifecycle().value
+                            if (chat.chat.receiver != receiver.receiver) {
+
+                                SendChat(
+                                    time = chat.chat.createdAt,
+                                    content = chat.chat.content,
+                                    bio = chat.senderBio,
+                                    isSent = false
+                                )
+                            } else {
+                                SendChat(
+                                    time = chat.chat.createdAt,
+                                    content = chat.chat.content,
+                                    bio = "You",
+                                    isSent = true
+                                )
+
+                            }
+                            Spacer(
+                                modifier = Modifier
+                                    .height(2.dp)
+                                    .background(Color.Gray)
                             )
                         }
-                        msg = ""
-                        Toast.makeText(context, receiver.phone, Toast.LENGTH_SHORT).show()
-                    },
-                    colors = IconButtonDefaults.iconButtonColors(
-                      disabledContainerColor =   MaterialTheme.colorScheme.secondaryContainer,
-                       containerColor =  MaterialTheme.colorScheme.primaryContainer
-                    ),
-                    modifier = Modifier.size(50.dp), enabled = msg.isNotBlank()
 
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "",
-                        modifier = Modifier
-                            .size(30.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+
+                    }
+                    Column {
+                        AnimatedVisibility(visible = isOptionsEnabled) {
+
+                            ElevatedCard(
+                                modifier = Modifier
+                                    .padding(horizontal = 10.dp)
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                                    .alpha(.9f),
+                                colors = CardDefaults.elevatedCardColors(MaterialTheme.colorScheme.surfaceDim),
+                                elevation = CardDefaults.cardElevation(10.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.LocationOn,
+                                    contentDescription = "location",
+                                    tint = Color.Green,
+                                    modifier = Modifier.size(60.dp)
+                                )
+                            }
+                        }
+                    }
+
                 }
+
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 5.dp),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = msg,
+                        onValueChange = { msg = it },
+                        modifier = Modifier.fillMaxWidth(.85f),
+                        shape = RoundedCornerShape(20.dp),
+                        maxLines = 3,
+                        placeholder = {
+                            Text(
+                                "Message",
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }, trailingIcon = {
+                            IconButton(onClick = {
+                                isOptionsEnabled = !isOptionsEnabled
+                            }) {
+
+                                Icon(
+                                    painterResource(R.drawable.attachment_24dp_e8eaed_fill0_wght400_grad0_opsz24),
+                                    contentDescription = "attachment",
+                                    modifier = Modifier.rotate(90f)
+                                )
+                            }
+
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+
+                        )
+                    )
+                    IconButton(
+                        onClick = {
+                            if (msg.isNotBlank()) {
+                                viewModel.sendMessage(
+                                    receiver.phone,
+                                    content = msg.trim()
+                                )
+                            }
+                            msg = ""
+                            Toast.makeText(context, receiver.phone, Toast.LENGTH_SHORT).show()
+                        },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
+                        modifier = Modifier.size(50.dp), enabled = msg.isNotBlank()
+
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(30.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+
+
             }
-
-
         }
     }
 }

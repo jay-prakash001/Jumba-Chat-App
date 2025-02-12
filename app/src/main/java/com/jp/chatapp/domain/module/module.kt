@@ -1,12 +1,15 @@
 package com.jp.chatapp.domain.module
 
+import android.system.Os.bind
 import androidx.datastore.preferences.preferencesDataStore
 import com.jp.chatapp.data.repoImpl.ktor.APIDataRepoImpl
+import com.jp.chatapp.data.repoImpl.ktor.SocketManagerImpl
 import com.jp.chatapp.data.repoImpl.ktor.DataStoreImpl
 import com.jp.chatapp.data.websocket.WebSocketManager
 import com.jp.chatapp.domain.repo.APIDataRepo
 import com.jp.chatapp.domain.repo.DataStore
 import com.jp.chatapp.data.dataStore.DataStorePref
+import com.jp.chatapp.domain.repo.SocketManagerRepo
 import com.jp.chatapp.presentation.viewmodel.ChatViewModel
 import com.jp.chatapp.presentation.viewmodel.HomeViewModel
 import com.jp.chatapp.presentation.viewmodel.LoginViewmodel
@@ -22,7 +25,10 @@ val appModule = module {
 
     single { DataStorePref(androidContext()) }
 
-    singleOf(::WebSocketManager) { bind<WebSocketManager>() }
+//    singleOf(::WebSocketManager) { bind<WebSocketManager>() }
+    single {
+        WebSocketManager
+    }
     single {
         preferencesDataStore("token")
     }
@@ -45,6 +51,10 @@ val appModule = module {
 
     singleOf(::DataStoreImpl) {
         bind<DataStore>()
+    }
+
+    singleOf(::SocketManagerImpl) {
+        bind<SocketManagerRepo>()
     }
 
 

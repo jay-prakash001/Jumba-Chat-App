@@ -45,7 +45,7 @@ fun HomePage(
         items(chatList.value) { user->
 
             val it = user.collectAsStateWithLifecycle().value
-            ChatListItem(chatUserInfo = it) {
+            ChatListItem(chatUserInfo = it, navController = navController) {
                 navController.navigate(
                     ChatRoute(
                         name = it.name,
@@ -57,19 +57,7 @@ fun HomePage(
                     )
                 )
             }
-//
-//            ChatList(chatUserInfo = it) {
-//                navController.navigate(
-//                    ChatRoute(
-//                        name = it.name,
-//                        lastSeen = it.lastSeen,
-//                        receiver = it.user_id,
-//                        bio = it.bio,
-//                        phone = it.phone,
-//                        profileImg = it.profileImg
-//                    )
-//                )
-//            }
+
         }
     }
 }

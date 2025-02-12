@@ -13,4 +13,5 @@ interface APIDataRepo {
     fun getContacts(token : String): Flow<ResultState<ContactRes>>
     fun addUser(phone: String, name : String, token: String) : Flow<ResultState<SingleContact>>
     fun login(phone : String) : Flow<ResultState<User>>
+    fun updateProfileImg(file: ByteArray, token: String) :Flow<ResultState<String>>
 }
