@@ -1,5 +1,6 @@
 package com.jp.chatapp.domain.repo
 
+import com.jp.chatapp.data.room.entities.Chat
 import com.jp.chatapp.domain.models.chatList.ChatUserInfo
 import com.jp.chatapp.domain.models.personalChat.PersonalChat
 
@@ -13,9 +14,9 @@ interface SocketManagerRepo {
 
 
 
-    fun sendMessage(token: String, phone: String, msg: String)
+    fun sendMessage(token: String, chat: Chat)
     fun syncChats(token: String, receiverId: String)
-    fun receiveChat(callBack: (PersonalChat) -> Unit)
+    fun receiveChat(callBack: (Chat) -> Unit)
 
     //update for phone
     fun getUserInfo(token: String, phone: String)

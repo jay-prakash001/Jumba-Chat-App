@@ -5,7 +5,7 @@ import androidx.room.Room
 import com.jp.chatapp.data.repoImpl.network.APIDataRepoImpl
 import com.jp.chatapp.data.repoImpl.network.SocketManagerImpl
 import com.jp.chatapp.data.repoImpl.dataStore.DataStoreImpl
-import com.jp.chatapp.data.websocket.WebSocketManager
+import com.jp.chatapp.data.network.websocket.WebSocketManager
 import com.jp.chatapp.domain.repo.APIDataRepo
 import com.jp.chatapp.domain.repo.DataStore
 import com.jp.chatapp.data.dataStore.DataStorePref

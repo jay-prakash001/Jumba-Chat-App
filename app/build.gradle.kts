@@ -19,11 +19,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments["room.schemaLocation"] = "$projectDir/schemas"
-            }
+//        javaCompileOptions {
+//            annotationProcessorOptions {
+//                arguments["room.schemaLocation"] = "$projectDir/schemas".toString()
+//            }
+//        }
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
         }
+
     }
 
     buildTypes {
@@ -89,6 +94,8 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:1.6.4")
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.logging)
+
+    implementation("com.google.code.gson:gson:2.12.1")
 
 //
 //

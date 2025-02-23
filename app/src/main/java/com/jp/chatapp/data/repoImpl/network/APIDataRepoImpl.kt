@@ -1,7 +1,7 @@
 package com.jp.chatapp.data.repoImpl.network
 
 //import com.jp.chatapp.domain.models.user.User
-import com.jp.chatapp.data.ktor.HttpClient
+import com.jp.chatapp.data.network.ktor.HttpClient
 import com.jp.chatapp.data.utils.URL
 import com.jp.chatapp.domain.models.LoginRequest
 import com.jp.chatapp.domain.models.contactList.ContactRequest

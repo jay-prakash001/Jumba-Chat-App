@@ -30,7 +30,6 @@ class HomeViewModel(
     val chatList = _chatList.asStateFlow()
 
 
-//    private val _contactList = MutableStateFlow<List<ContactUserInfo>>(emptyList())
     private val _contactList = MutableStateFlow<List<Contact>>(emptyList())
     val contactList = _contactList.asStateFlow()
 
@@ -76,6 +75,8 @@ class HomeViewModel(
             }
         }
     }
+
+
 
 
 
@@ -156,28 +157,6 @@ class HomeViewModel(
             println(contact)
             localRoomDbRepo.addContact(contact)
 
-
-
-
-//            if (_accessToken.value.isNullOrBlank()) return@launch
-//            apiDataRepo.addUser(phone, name, _accessToken.value!!).collectLatest { newContact ->
-//                when (newContact) {
-//                    is ResultState.Error -> {}
-//                    ResultState.Loading -> {}
-//                    is ResultState.Success -> {
-//                        _contactList.collectLatest { contact ->
-////                            val existing =
-//////                                contact.find { it.userInfo._id == newContact.data.data.userInfo._id }
-////                            if (existing == null) {
-//////                                _contactList.value += newContact.data.data
-////                            }
-//                        }
-//
-//
-//                    }
-//                }
-//
-//            }
         }
     }
 

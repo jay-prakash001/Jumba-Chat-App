@@ -1,6 +1,8 @@
 package com.jp.chatapp.data.repoImpl.network
 
-import com.jp.chatapp.data.websocket.WebSocketManager
+import com.jp.chatapp.data.network.websocket.WebSocketManager
+import com.jp.chatapp.data.room.entities.Chat
+import com.jp.chatapp.data.utils.ChatType
 import com.jp.chatapp.domain.models.chatList.ChatUserInfo
 import com.jp.chatapp.domain.models.personalChat.PersonalChat
 import com.jp.chatapp.domain.repo.SocketManagerRepo
@@ -18,31 +20,25 @@ class SocketManagerImpl(private val socketManager: WebSocketManager) : SocketMan
         socketManager.join(token, firebaseMessagingToken)
     }
 
-     fun getChatList(token: String) {
-        socketManager.getChatList(token)
 
-    }
 
-     fun chatList(callBack: (ChatUserInfo) -> Unit) {
 
-        socketManager.chatList(callBack)
-    }
 
-    override fun sendMessage(token: String, phone: String, msg: String) {
-        socketManager.sendMessage(token, phone, msg)
+    override fun sendMessage(token: String, chat : Chat) {
+
+        socketManager.sendMessage(token, chat)
     }
 
     override fun syncChats(token: String, receiverId: String) {
         TODO("Not yet implemented")
     }
 
-     fun getPreviousChats(token: String, receiverId: String) {
-        socketManager.getPreviousChats(token, receiverId)
-    }
 
-    override fun receiveChat(callBack: (PersonalChat) -> Unit) {
+
+    override fun receiveChat(callBack: (Chat) -> Unit) {
         socketManager.receiveChat(callBack)
     }
+
 
     override fun getUserInfo(token: String, phone: String   ) {
         socketManager.getUserInfo(token, phone)
@@ -64,7 +60,4 @@ class SocketManagerImpl(private val socketManager: WebSocketManager) : SocketMan
         socketManager.updateProfileImg(file, fileType, token)
     }
 
-     fun testEnum() {
-        socketManager.testEnum()
-    }
 }

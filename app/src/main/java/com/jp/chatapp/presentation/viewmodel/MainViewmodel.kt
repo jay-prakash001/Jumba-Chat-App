@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
-import com.jp.chatapp.data.websocket.WebSocketManager
+import com.jp.chatapp.data.network.websocket.WebSocketManager
 import com.jp.chatapp.domain.repo.DataStore
 import com.jp.chatapp.domain.repo.SocketManagerRepo
 import com.jp.chatapp.domain.state.ResultState

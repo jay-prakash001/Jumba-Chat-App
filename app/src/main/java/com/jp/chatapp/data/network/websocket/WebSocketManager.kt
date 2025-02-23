@@ -1,5 +1,7 @@
-package com.jp.chatapp.data.websocket
+package com.jp.chatapp.data.network.websocket
 
+import com.google.gson.Gson
+import com.jp.chatapp.data.room.entities.Chat
 import com.jp.chatapp.data.utils.MessageStatus
 import com.jp.chatapp.domain.models.chatList.ChatUserInfo
 import com.jp.chatapp.domain.models.personalChat.PersonalChat
@@ -7,6 +9,7 @@ import io.socket.client.IO
 import io.socket.client.Socket
 import kotlinx.serialization.json.Json
 import org.json.JSONObject
+
 
 
 object WebSocketManager {
@@ -36,64 +39,11 @@ object WebSocketManager {
         socket.emit("join", json)
     }
 
-    fun getChatList(token : String){
-        socket.emit("chatList",token)
-    }
-    fun chatList( callBack: (ChatUserInfo) -> Unit){
-        println("hello")
-        socket.on("chatList"){args->
-
-            println("args ${args[0]}")
-
-            try {
-
-                val json = args[0].toString()
-                val item = Json.decodeFromString<ChatUserInfo>(json)
-                println(item)
-                callBack(item)
-            }catch (e :Exception){
-            println("error : $e")
-            }
-        }
-    }
-
-
-
-    fun sendMessage(token: String, phone: String, msg: String) {
-        println(phone)
-        val jsonObject = JSONObject().apply {
-            put("phone", phone)
-            put("token", token)
-            put("msg", msg)
-        }
-        socket.emit("chat", jsonObject)
-    }
-    fun getPreviousChats(token: String, receiverId: String) {
-        val jsonObject = JSONObject().apply {
-            put("token", token)
-            put("receiverId", receiverId)
-        }
-
-        socket.emit("previousChat", jsonObject)
-    }
-    fun receiveChat(callBack : (PersonalChat)->Unit){
-        socket.on("chat") { args ->
-            try {
-                val json = args[0].toString()
-                val item = Json.decodeFromString<PersonalChat>(json)
-                callBack(item)
-            }catch (e : Exception){
-                println(e.localizedMessage)
-            }
-
-        }
-    }
-
    fun getUserInfo(token: String, phone : String){
 
        val json = JSONObject().apply {
            put("token",token)
-           put("userId",phone)
+           put("phone",phone)
        }
        socket.emit("getUserInfo",json)
    }
@@ -104,8 +54,9 @@ object WebSocketManager {
         }
         socket.emit("getProfile",json)
     }
+
     fun receiverUserInfo(callBack: (ChatUserInfo) -> Unit){
-        socket.on("getUserInfo"){args->
+        socket.on("getUserInfo"){ args->
            try {
                val json = args[0].toString()
                val item  = Json.decodeFromString<ChatUserInfo>(json)
@@ -139,8 +90,36 @@ object WebSocketManager {
     }
 
 
-    fun testEnum(){
-        socket.emit("mediaChat",MessageStatus.READ)
+
+    fun sendMessage(token: String, chat: Chat) {
+        println(chat)
+        val jsonObject = JSONObject().apply {
+            put("token", token)
+            put("msg", Gson().toJson(chat))
+        }
+        socket.emit("mediaChat", jsonObject)
     }
+
+    fun syncChats(token: String, receiverId: String) {
+        val jsonObject = JSONObject().apply {
+            put("token", token)
+            put("receiverId", receiverId)
+        }
+
+        socket.emit("previousChat", jsonObject)
+    }
+    fun receiveChat(callBack : (Chat)->Unit){
+        socket.on("chat") { args ->
+            try {
+                val json = args[0].toString()
+                val item = Json.decodeFromString<Chat>(json)
+                callBack(item)
+            }catch (e : Exception){
+                println(e.localizedMessage)
+            }
+
+        }
+    }
+
 
 }

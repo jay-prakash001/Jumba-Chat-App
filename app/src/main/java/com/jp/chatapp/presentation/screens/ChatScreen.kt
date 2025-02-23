@@ -97,10 +97,10 @@ fun ChatScreen(
         state.animateScrollToItem(if (chats.value.isNotEmpty()) chats.value.size - 1 else 0)
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(receiver.phone) {
 
         viewModel.getUserInfo(receiver.phone)
-        viewModel.clearList()
+        viewModel.getOfflineChats(receiver.phone)
 
     }
 
@@ -221,7 +221,9 @@ fun ChatScreen(
                             .fillMaxWidth()
                     ) {
                         items(chats.value) { it ->
-                            val chat = it.collectAsStateWithLifecycle().value
+
+                            val chat = it
+                            Text("${chat.sender} : ${chat.content}")
 //                            if (chat.chat.receiver != receiver.receiver) {
 //
 //                                SendChat(
