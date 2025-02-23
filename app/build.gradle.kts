@@ -3,8 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "2.0.21"
-
     id("com.google.gms.google-services")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -19,6 +19,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["room.schemaLocation"] = "$projectDir/schemas"
+            }
+        }
     }
 
     buildTypes {
@@ -82,15 +87,13 @@ dependencies {
     implementation(libs.ktor.client.android)
     implementation("androidx.datastore:datastore-preferences:1.1.2")
     implementation("io.ktor:ktor-client-cio:1.6.4")
-//    implementation("io.ktor:ktor-client-content-negotiation:1.6.8")
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.logging)
 
+//
+//
 //    implementation("io.ktor:ktor-client-multipart:2.3.5") // For multipart/form-data requests
-
-
-//
-//
+//    implementation("io.ktor:ktor-client-content-negotiation:1.6.8")
 //
 //    val ktor_version = "2.3.5" // Use the latest version
 //
@@ -106,4 +109,14 @@ dependencies {
 
 
     implementation("com.google.firebase:firebase-messaging")
+
+
+
+    val room_version = "2.6.1"
+
+    implementation("androidx.room:room-runtime:$room_version")
+
+    ksp("androidx.room:room-compiler:$room_version")
+
+    implementation("androidx.room:room-ktx:2.6.1")
 }

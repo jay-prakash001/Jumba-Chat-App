@@ -1,11 +1,13 @@
-package com.jp.chatapp.data.repoImpl.ktor
+package com.jp.chatapp.data.repoImpl.network
 
 //import com.jp.chatapp.domain.models.user.User
+import com.jp.chatapp.data.ktor.HttpClient
 import com.jp.chatapp.data.utils.URL
 import com.jp.chatapp.domain.models.LoginRequest
 import com.jp.chatapp.domain.models.contactList.ContactRequest
 import com.jp.chatapp.domain.models.contactList.ContactRes
 import com.jp.chatapp.domain.models.contactList.SingleContact
+import com.jp.chatapp.domain.models.contactList.UserInfo
 import com.jp.chatapp.domain.models.user2.ProfileUpdateResponse
 import com.jp.chatapp.domain.models.user2.User
 import com.jp.chatapp.domain.repo.APIDataRepo
@@ -96,7 +98,7 @@ class APIDataRepoImpl() : APIDataRepo {
                 emit(ResultState.Success(res))
 
             } catch (e: Exception) {
-                emit(ResultState.Error(e.localizedMessage))
+                emit(ResultState.Error(e.message.toString()))
             }
         }
 
@@ -114,6 +116,7 @@ class APIDataRepoImpl() : APIDataRepo {
 
             println("Login $res")
         } catch (e: Exception) {
+            println(e.localizedMessage)
             emit(ResultState.Error(e.localizedMessage))
         }
     }
@@ -143,6 +146,22 @@ class APIDataRepoImpl() : APIDataRepo {
                 emit(ResultState.Error(e.message.toString()))
             }
         }
+
+    override suspend fun getContact(phone : String) : Flow<UserInfo>  = flow{
+        val req = ContactRequest("",phone)
+        try {
+            val res = HttpClient.client.post<UserInfo>("$URL/user/contacts/contact_info"){
+                contentType(ContentType.Application.Json)
+                body = req
+            }
+            println("Contact gg $res")
+            emit(res)
+        }catch (e : Exception){
+            println("Contact gg $e")
+        }
+
+
+    }
 
 }
 

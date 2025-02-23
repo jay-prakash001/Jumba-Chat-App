@@ -61,10 +61,10 @@ fun HomeScreen(
     }
 
     LaunchedEffect(pagerState.currentPage) {
-        if(!pagerState.isScrollInProgress){
+//        if(!pagerState.isScrollInProgress){
 
         selectedPage = pagerState.currentPage
-        }
+//        }
     }
     Scaffold(
 

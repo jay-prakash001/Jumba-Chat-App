@@ -39,10 +39,10 @@ fun TestDataStore(
 
         Button(onClick = {
             mainViewmodel.connect()
-            mainViewmodel.receiveChatList {
-                list.value = list.value + it
-
-            }
+//            mainViewmodel.receiveChatList {
+//                list.value = list.value + it
+//
+//            }
         }) {
 
             Text("Connect")

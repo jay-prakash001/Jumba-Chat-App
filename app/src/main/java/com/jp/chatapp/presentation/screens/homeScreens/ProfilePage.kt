@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,6 +45,7 @@ import com.jp.chatapp.presentation.navigation.Splash
 import com.jp.chatapp.presentation.utils.fileType
 import com.jp.chatapp.presentation.utils.getFileBytesFromUri
 import com.jp.chatapp.presentation.viewmodel.HomeViewModel
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,12 +57,15 @@ fun ProfilePage(homeViewModel: HomeViewModel, navController: NavController) {
 
     }
     LaunchedEffect(Unit) {
-            homeViewModel.getProfile()
-
-
+        homeViewModel.getProfile()
 
     }
     val profile = homeViewModel.profile.collectAsStateWithLifecycle().value ?: return
+    val isLoading = remember { mutableStateOf(false) }
+    LaunchedEffect(profile.profileImg) {
+        newImg.value = null
+        isLoading.value = false
+    }
 
 
     Column(
@@ -116,12 +121,25 @@ fun ProfilePage(homeViewModel: HomeViewModel, navController: NavController) {
                         getFileBytesFromUri(context, newImg.value!!),
                         fileType(context, newImg.value!!)
                     )
+                    isLoading.value = true
+
                 }
             },
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surfaceTint),
+            colors = ButtonDefaults.buttonColors(
+                MaterialTheme.colorScheme.surfaceTint
+            ),
             modifier = Modifier.width(200.dp), enabled = newImg.value != null
         ) {
-            Text("Update")
+            if (isLoading.value) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    trackColor = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.size(20.dp), strokeWidth = 2.dp
+                )
+            } else {
+
+                Text("Update")
+            }
         }
 
         Spacer(Modifier.height(10.dp))

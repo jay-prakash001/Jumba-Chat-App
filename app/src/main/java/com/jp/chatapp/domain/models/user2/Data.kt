@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Data(
     val accessToken: String,
-    val refreshtoken: String,
+    val refreshToken: String,
     val user: UserX
 )

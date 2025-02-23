@@ -13,7 +13,7 @@ data class UserX(
     val isOnline: Boolean,
     val phone: String,
     val profileImg: String,
-    val refreshtoken: String,
+    val refreshToken: String,
     val socketId: String?= null,
     val updatedAt: String
 )

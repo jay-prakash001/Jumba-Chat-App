@@ -1,4 +1,4 @@
-package com.jp.chatapp.data.repoImpl.ktor
+package com.jp.chatapp.data.repoImpl.dataStore
 
 import com.jp.chatapp.domain.repo.DataStore
 import com.jp.chatapp.domain.state.ResultState
@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 

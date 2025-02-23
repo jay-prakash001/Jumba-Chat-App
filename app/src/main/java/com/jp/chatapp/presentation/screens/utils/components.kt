@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -31,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
+import com.jp.chatapp.R
+import com.jp.chatapp.data.room.entities.Contact
 import com.jp.chatapp.domain.models.chatList.ChatUserInfo
 import com.jp.chatapp.domain.models.contactList.ContactUserInfo
 import com.jp.chatapp.domain.models.contactList.SingleContact
@@ -39,8 +42,13 @@ import com.jp.chatapp.presentation.utils.timeFormatter
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun ChatListItem(modifier: Modifier = Modifier, chatUserInfo: ChatUserInfo, navController : NavController, onClick: () -> Unit) {
-val context = LocalContext.current
+fun ChatListItem(
+    modifier: Modifier = Modifier,
+    chatUserInfo: ChatUserInfo,
+    navController: NavController,
+    onClick: () -> Unit
+) {
+    val context = LocalContext.current
     Card(
         onClick = onClick,
         modifier = modifier.padding(2.dp),
@@ -58,15 +66,20 @@ val context = LocalContext.current
                 contentDescription = chatUserInfo.name,
                 modifier = Modifier
                     .size(60.dp)
-                    .clip(CircleShape).clickable {
+                    .clip(CircleShape)
+                    .clickable {
                         Toast
                             .makeText(context, "Loading Profile Image", Toast.LENGTH_SHORT)
                             .show()
                         if (chatUserInfo.profileImg.isNullOrBlank()) {
                             Toast
-                                .makeText(context, "Error Loading Profile Image", Toast.LENGTH_SHORT)
+                                .makeText(
+                                    context,
+                                    "Error Loading Profile Image",
+                                    Toast.LENGTH_SHORT
+                                )
                                 .show()
-                        }else{
+                        } else {
                             navController.navigate(ShowImage(chatUserInfo.profileImg))
                         }
 
@@ -118,12 +131,12 @@ val context = LocalContext.current
 
 
 @Composable
-fun ContactListItem(modifier: Modifier = Modifier, contact: ContactUserInfo, onClick: () -> Unit) {
+fun ContactListItem(navController: NavController, contact: Contact, onClick: () -> Unit) {
 
     Card(
         onClick = onClick,
-        modifier = modifier.padding(2.dp),
-        shape = RoundedCornerShape(topStart = 50.dp, bottomStart = 50.dp),
+        modifier = Modifier.padding(2.dp),
+        shape = RoundedCornerShape(5.dp),
 
         ) {
         Row(
@@ -131,13 +144,22 @@ fun ContactListItem(modifier: Modifier = Modifier, contact: ContactUserInfo, onC
                 .fillMaxWidth()
                 .padding(2.dp), verticalAlignment = Alignment.CenterVertically
         ) {
+            val img = if (contact.profileImg.isNullOrBlank()) {
+                R.drawable.profile
+            } else {
+
+                contact.profileImg
+            }
             SubcomposeAsyncImage(
-                contact.userInfo.profileImg,
+               img,
                 contentDescription = contact.name,
                 modifier = Modifier
                     .size(60.dp)
                     .padding(2.dp)
-                    .clip(CircleShape), contentScale = ContentScale.Crop
+                    .clip(CircleShape)
+                    .clickable {
+                        navController.navigate(ShowImage(img.toString()))
+                    }, contentScale = ContentScale.Crop
             )
             Column(
                 modifier = Modifier
@@ -153,17 +175,12 @@ fun ContactListItem(modifier: Modifier = Modifier, contact: ContactUserInfo, onC
                     fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth()
 
                 )
-
-
-
                 Text(
-                    "Last Seen ${timeFormatter(contact.userInfo.updatedAt)}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Thin
+                    contact.bio.capitalize(),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Light, modifier = Modifier.fillMaxWidth()
 
                 )
-
 
             }
         }
@@ -193,7 +210,7 @@ fun SendChat(
         Row(
             modifier = Modifier
                 .wrapContentWidth()
-                .widthIn(70.dp,350.dp)
+                .widthIn(70.dp, 350.dp)
                 .padding(horizontal = 10.dp, vertical = 2.dp)
 
                 .clip(
@@ -214,7 +231,8 @@ fun SendChat(
             Column(
                 modifier = Modifier
                     .padding(vertical = 5.dp, horizontal = 10.dp)
-                    .wrapContentWidth() .widthIn(50.dp,350.dp)
+                    .wrapContentWidth()
+                    .widthIn(50.dp, 350.dp)
             ) {
                 Text(
                     bio,
@@ -226,8 +244,10 @@ fun SendChat(
                     style = MaterialTheme.typography.bodyLarge,
                     color = contentColor
                 )
-                Row(modifier  = Modifier.wrapContentWidth(),
-                    horizontalArrangement = Arrangement.End) {
+                Row(
+                    modifier = Modifier.wrapContentWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
                     Text(
                         timeFormatter(time),
                         style = MaterialTheme.typography.labelSmall,

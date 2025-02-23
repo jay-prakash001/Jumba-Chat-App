@@ -6,6 +6,7 @@ import com.jp.chatapp.data.websocket.WebSocketManager
 import com.jp.chatapp.domain.models.chatList.ChatUserInfo
 import com.jp.chatapp.domain.models.personalChat.PersonalChat
 import com.jp.chatapp.domain.repo.DataStore
+import com.jp.chatapp.domain.repo.LocalRoomDbRepo
 import com.jp.chatapp.domain.repo.SocketManagerRepo
 import com.jp.chatapp.utils.ACCESS_TOKEN
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,9 +15,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ChatViewModel(
-//    private val webSocketManager: WebSocketManager,
     private val webSocketManager: SocketManagerRepo,
-    private val dataStore: DataStore
+    private val dataStore: DataStore,
+    private  val localRoomDbRepo: LocalRoomDbRepo
 ) : ViewModel() {
 
     private val _chats = MutableStateFlow<List<MutableStateFlow<PersonalChat>>>(emptyList())
@@ -51,7 +52,7 @@ class ChatViewModel(
 //        println("get Chats $receiver")
         viewModelScope.launch {
             if (_accessToken.value.isNullOrBlank()) return@launch
-            webSocketManager.getPreviousChats(_accessToken.value!!, receiver)
+//            webSocketManager.getPreviousChats(_accessToken.value!!, receiver)
         }
         receiveChats()
     }
@@ -89,11 +90,11 @@ class ChatViewModel(
 
     }
 
-    fun getUserInfo(userId: String) {
+    fun getUserInfo(phone: String) {
         _userInfo.value = null
         if (_accessToken.value.isNullOrBlank()) return
         viewModelScope.launch {
-            webSocketManager.getUserInfo(_accessToken.value!!, userId)
+            webSocketManager.getUserInfo(_accessToken.value!!, phone)
         }
 
         receiverUserInfo()

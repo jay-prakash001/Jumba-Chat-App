@@ -54,7 +54,7 @@ class LoginViewmodel(
 
                             println("Log : Data ${_user.value}")
                             saveToken(ACCESS_TOKEN, it.data.data.accessToken)
-                            saveToken(REFRESH_TOKEN, it.data.data.refreshtoken)
+                            saveToken(REFRESH_TOKEN, it.data.data.refreshToken)
                         }
                     }
                 }
@@ -79,7 +79,7 @@ class LoginViewmodel(
                             _user.value = UserState(data = it.data)
 
                             saveToken(ACCESS_TOKEN, it.data.data.accessToken)
-                            saveToken(REFRESH_TOKEN, it.data.data.refreshtoken)
+                            saveToken(REFRESH_TOKEN, it.data.data.refreshToken)
 
 
                     }

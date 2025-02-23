@@ -5,8 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.compose.rememberNavController
 import com.example.compose.AppTheme
 import com.jp.chatapp.presentation.navigation.App
+import com.jp.chatapp.presentation.navigation.ChatRoute
+import com.jp.chatapp.presentation.screens.ChatScreen
 import com.jp.chatapp.presentation.utils.TestDataStore
 import com.jp.chatapp.presentation.utils.TestEnum
 import com.jp.chatapp.presentation.utils.TexturedBackGround
@@ -28,15 +31,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme(dynamicColor = false) {
-//
-//                App(
-//                    mainViewmodel = mainViewmodel,
-//                    chatViewModel = chatViewModel,
-//                    homeViewModel = homeViewModel,
-//                    loginViewmodel = loginViewmodel
-//                )
-//
-                TestEnum(mainViewmodel)
+
+                App(
+                    mainViewmodel = mainViewmodel,
+                    chatViewModel = chatViewModel,
+                    homeViewModel = homeViewModel,
+                    loginViewmodel = loginViewmodel
+                )
+
+
+
             }
         }
 
@@ -46,7 +50,6 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         mainViewmodel.connect()
-        homeViewModel.receiveChatList()
         chatViewModel.receiveChats()
         chatViewModel.receiverUserInfo()
 

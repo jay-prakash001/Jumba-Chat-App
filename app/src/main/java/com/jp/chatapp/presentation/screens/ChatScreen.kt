@@ -89,9 +89,7 @@ fun ChatScreen(
     LaunchedEffect(true) {
         viewModel.receiveChats()
     }
-    LaunchedEffect(Unit) {
-        viewModel.getChats(receiver.receiver)
-    }
+
 
     val chats = viewModel.chats.collectAsStateWithLifecycle()
     val user by viewModel.userInfo.collectAsStateWithLifecycle()
@@ -101,7 +99,7 @@ fun ChatScreen(
 
     LaunchedEffect(Unit) {
 
-        viewModel.getUserInfo(receiver.receiver)
+        viewModel.getUserInfo(receiver.phone)
         viewModel.clearList()
 
     }
@@ -170,10 +168,7 @@ fun ChatScreen(
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(receiver.name, style = MaterialTheme.typography.titleLarge)
-                            Text(
-                                if (receiver.isOnline) "Online" else dateFormatter(receiver.lastSeen),
-                                style = MaterialTheme.typography.labelSmall
-                            )
+
                         }
                     }
                 }
@@ -227,23 +222,23 @@ fun ChatScreen(
                     ) {
                         items(chats.value) { it ->
                             val chat = it.collectAsStateWithLifecycle().value
-                            if (chat.chat.receiver != receiver.receiver) {
-
-                                SendChat(
-                                    time = chat.chat.createdAt,
-                                    content = chat.chat.content,
-                                    bio = chat.senderBio,
-                                    isSent = false
-                                )
-                            } else {
-                                SendChat(
-                                    time = chat.chat.createdAt,
-                                    content = chat.chat.content,
-                                    bio = "You",
-                                    isSent = true
-                                )
-
-                            }
+//                            if (chat.chat.receiver != receiver.receiver) {
+//
+//                                SendChat(
+//                                    time = chat.chat.createdAt,
+//                                    content = chat.chat.content,
+//                                    bio = chat.senderBio,
+//                                    isSent = false
+//                                )
+//                            } else {
+//                                SendChat(
+//                                    time = chat.chat.createdAt,
+//                                    content = chat.chat.content,
+//                                    bio = "You",
+//                                    isSent = true
+//                                )
+//
+//                            }
                             Spacer(
                                 modifier = Modifier
                                     .height(2.dp)

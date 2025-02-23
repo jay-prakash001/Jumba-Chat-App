@@ -42,11 +42,14 @@ fun ContactsPage(
     LaunchedEffect(Unit) {
         viewModel.getContacts()
     }
-
     val contacts = viewModel.contactList.collectAsStateWithLifecycle().value
+    LaunchedEffect(contacts) {
+        viewModel.updateContacts()
+    }
+
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier.padding(2.dp).fillMaxSize(),
+//        verticalArrangement = Arrangement.spacedBy(1.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -81,16 +84,15 @@ fun ContactsPage(
 
         }
 
+
         items(contacts) {
-            ContactListItem(contact = it) {
+
+            ContactListItem(navController,contact = it) {
                 navController.navigate(
                     ChatRoute(
-                        receiver = it.userInfo._id,
-                        lastSeen = it.userInfo.updatedAt,
-                        bio = it.userInfo.bio,
-                        phone = it.userInfo.phone,
-                        isOnline = false,
-                        profileImg = it.userInfo.profileImg,
+                        bio = it.bio,
+                        phone = it.phone,
+                        profileImg = it.profileImg,
                         name = it.name
                     )
                 )

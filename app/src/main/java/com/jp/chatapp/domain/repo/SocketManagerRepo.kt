@@ -10,15 +10,15 @@ interface SocketManagerRepo {
     fun removeCon(token: String)
     fun join(token: String, firebaseMessagingToken: String)
 
-    fun getChatList(token: String)
-    fun chatList(callBack: (ChatUserInfo) -> Unit)
+
 
 
     fun sendMessage(token: String, phone: String, msg: String)
-    fun getPreviousChats(token: String, receiverId: String)
+    fun syncChats(token: String, receiverId: String)
     fun receiveChat(callBack: (PersonalChat) -> Unit)
 
-    fun getUserInfo(token: String, userId: String)
+    //update for phone
+    fun getUserInfo(token: String, phone: String)
 
     fun getProfile(token: String)
     fun receiverUserInfo(callBack: (ChatUserInfo) -> Unit)
@@ -28,6 +28,5 @@ interface SocketManagerRepo {
 
     fun updateProfileImg(file: ByteArray, fileType: String, token : String)
 
-    fun testEnum()
 
 }

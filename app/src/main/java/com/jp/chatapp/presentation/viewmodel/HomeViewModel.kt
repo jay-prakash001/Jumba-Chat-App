@@ -2,11 +2,13 @@ package com.jp.chatapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jp.chatapp.data.room.entities.Contact
 import com.jp.chatapp.domain.models.chatList.ChatUserInfo
 import com.jp.chatapp.domain.models.contactList.ContactUserInfo
 import com.jp.chatapp.domain.repo.APIDataRepo
 import com.jp.chatapp.domain.state.ResultState
 import com.jp.chatapp.domain.repo.DataStore
+import com.jp.chatapp.domain.repo.LocalRoomDbRepo
 import com.jp.chatapp.domain.repo.SocketManagerRepo
 import com.jp.chatapp.utils.ACCESS_TOKEN
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,11 +17,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-//    private val webSocketManager: WebSocketManager,
     private val webSocketManager: SocketManagerRepo,
-
     private val dataStore: DataStore,
-    private val apiDataRepo: APIDataRepo
+    private val apiDataRepo: APIDataRepo,
+    private val localRoomDbRepo: LocalRoomDbRepo
 ) : ViewModel() {
 
     private val _profile = MutableStateFlow<ChatUserInfo?>(null)
@@ -29,12 +30,12 @@ class HomeViewModel(
     val chatList = _chatList.asStateFlow()
 
 
-    private val _contactList = MutableStateFlow<List<ContactUserInfo>>(emptyList())
+//    private val _contactList = MutableStateFlow<List<ContactUserInfo>>(emptyList())
+    private val _contactList = MutableStateFlow<List<Contact>>(emptyList())
     val contactList = _contactList.asStateFlow()
 
 
     private val _accessToken = MutableStateFlow<String?>(null)
-    val accessToken = _accessToken.asStateFlow()
 
     init {
 
@@ -48,93 +49,135 @@ class HomeViewModel(
                 println("Token refreshed ")
                 _accessToken.value = it
                 getProfile()
-                receiveChatList()
                 println("receiving the chat list0")
 
             }
         }
     }
 
-    fun logout(){
+    fun logout() {
         viewModelScope.launch {
-            dataStore.setToken(ACCESS_TOKEN,null)
+            dataStore.setToken(ACCESS_TOKEN, null)
         }
     }
-    fun receiveChatList() {
-        println("receiving the chat list")
-        viewModelScope.launch {
-            webSocketManager.chatList { chatI ->
 
-                println("chat list00 $chatI")
-                val existingItem = _chatList.value.find { it.value.phone == chatI.phone }
-                if (existingItem != null) {
-                    // Update existing item inside the MutableStateFlow
-                    existingItem.value = chatI
-                } else {
-                    // Add a new item to the list
-                    _chatList.value += MutableStateFlow(chatI)
+    fun getChatList(){
+        // TODO:  to be implemented with room
+    }
+
+     fun updateContacts(){
+        viewModelScope.launch {
+            _contactList.value.forEach { contact->
+                apiDataRepo.getContact(contact.phone).collectLatest {
+                    val updatedContact = contact.copy(bio = it.bio, profileImg = it.profileImg)
+
+                    localRoomDbRepo.addContact(updatedContact)
                 }
-
-            }
-            println("chat list ${_chatList.value}")
-            getChatList()
-        }
-    }
-
-
-    fun getChatList() {
-        viewModelScope.launch {
-            if (!_accessToken.value.isNullOrBlank()) {
-
-                webSocketManager.getChatList(_accessToken.value!!)
             }
         }
     }
+
+
+
+//    fun receiveChatList() {
+//        // to be implemented with room
+//        println("receiving the chat list")
+//        viewModelScope.launch {
+////            webSocketManager.chatList { chatI ->
+////
+////                println("chat list00 $chatI")
+////                val existingItem = _chatList.value.find { it.value.phone == chatI.phone }
+////                if (existingItem != null) {
+////                    // Update existing item inside the MutableStateFlow
+////                    existingItem.value = chatI
+////                } else {
+////                    // Add a new item to the list
+////                    _chatList.value += MutableStateFlow(chatI)
+////                }
+////
+////            }
+//            println("chat list ${_chatList.value}")
+//        }
+//    }
+
+
+//    fun getChatList() {
+//        viewModelScope.launch {
+//            if (!_accessToken.value.isNullOrBlank()) {
+//
+////                webSocketManager.getChatList(_accessToken.value!!)
+//            }
+//        }
+//    }
 
     fun getContacts() {
         viewModelScope.launch {
-            if (!_accessToken.value.isNullOrBlank()) {
-                apiDataRepo.getContacts(token = _accessToken.value!!).collectLatest { contact ->
-                    when (contact) {
-                        is ResultState.Error -> {
 
-                        }
+            localRoomDbRepo.getContacts().collectLatest {
+                println("Contacts $it")
 
-                        ResultState.Loading -> {
+                _contactList.value = it}
 
-                        }
-
-                        is ResultState.Success -> {
-
-                            _contactList.value = contact.data.data
-                        }
-                    }
-                }
-            }
         }
+
+
+
+
+
+
+//        viewModelScope.launch {
+//            if (!_accessToken.value.isNullOrBlank()) {
+//                apiDataRepo.getContacts(token = _accessToken.value!!).collectLatest { contact ->
+//                    when (contact) {
+//                        is ResultState.Error -> {
+//
+//                        }
+//
+//                        ResultState.Loading -> {
+//
+//                        }
+//
+//                        is ResultState.Success -> {
+//
+//                            _contactList.value = contact.data.data
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     fun addContact(name: String, phone: String) {
+
+
+
         viewModelScope.launch {
-            if (_accessToken.value.isNullOrBlank()) return@launch
-            apiDataRepo.addUser(phone, name, _accessToken.value!!).collectLatest { newContact ->
-                when (newContact) {
-                    is ResultState.Error -> {}
-                    ResultState.Loading -> {}
-                    is ResultState.Success -> {
-                        _contactList.collectLatest { contact ->
-                            val existing =
-                                contact.find { it.userInfo._id == newContact.data.data.userInfo._id }
-                            if (existing == null) {
-                                _contactList.value += newContact.data.data
-                            }
-                        }
+            val contact = Contact(phone = phone, name = name, profileImg = null)
+            println(contact)
+            localRoomDbRepo.addContact(contact)
 
 
-                    }
-                }
 
-            }
+
+//            if (_accessToken.value.isNullOrBlank()) return@launch
+//            apiDataRepo.addUser(phone, name, _accessToken.value!!).collectLatest { newContact ->
+//                when (newContact) {
+//                    is ResultState.Error -> {}
+//                    ResultState.Loading -> {}
+//                    is ResultState.Success -> {
+//                        _contactList.collectLatest { contact ->
+////                            val existing =
+//////                                contact.find { it.userInfo._id == newContact.data.data.userInfo._id }
+////                            if (existing == null) {
+//////                                _contactList.value += newContact.data.data
+////                            }
+//                        }
+//
+//
+//                    }
+//                }
+//
+//            }
         }
     }
 
@@ -156,7 +199,7 @@ class HomeViewModel(
         }
     }
 
-    fun updateProfile(file : ByteArray?, fileName: String?){
+    fun updateProfile(file: ByteArray?, fileName: String?) {
         println("homeViewmodel token ${_accessToken.value}")
         if (file == null || fileName.isNullOrBlank()) return
         viewModelScope.launch {

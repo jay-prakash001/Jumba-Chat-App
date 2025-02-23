@@ -26,12 +26,6 @@ fun HomePage(
     navController: NavHostController,
 ) {
 
-    LaunchedEffect(true) {
-
-        viewModel.receiveChatList()
-
-    }
-
     val chatList = viewModel.chatList.collectAsStateWithLifecycle()
     val context = LocalContext.current
     LazyColumn(
@@ -49,8 +43,6 @@ fun HomePage(
                 navController.navigate(
                     ChatRoute(
                         name = it.name,
-                        lastSeen = it.lastSeen,
-                        receiver = it.user_id,
                         bio = it.bio,
                         phone = it.phone,
                         profileImg = it.profileImg

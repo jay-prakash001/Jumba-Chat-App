@@ -89,11 +89,11 @@ object WebSocketManager {
         }
     }
 
-   fun getUserInfo(token: String, userId : String){
+   fun getUserInfo(token: String, phone : String){
 
        val json = JSONObject().apply {
            put("token",token)
-           put("userId",userId)
+           put("userId",phone)
        }
        socket.emit("getUserInfo",json)
    }

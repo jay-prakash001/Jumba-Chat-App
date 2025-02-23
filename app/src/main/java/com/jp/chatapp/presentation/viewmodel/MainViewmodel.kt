@@ -21,7 +21,6 @@ import kotlinx.coroutines.tasks.await
 
 class MainViewmodel(
     private val dataStore: DataStore,
-//    private val webSocketManager: WebSocketManager
     private val webSocketManager: SocketManagerRepo
 ) : ViewModel() {
 
@@ -57,7 +56,7 @@ class MainViewmodel(
         joinSocket()
     }
 
-     private fun joinSocket() {
+    private fun joinSocket() {
         viewModelScope.launch {
             accessToken.collectLatest { it ->
                 println("AccessToken $it")
@@ -69,29 +68,20 @@ class MainViewmodel(
                             val fcmToken = Firebase.messaging.token.await()
                             webSocketManager.join(it.data, fcmToken)
                             _isJoined.value = true
-                            println(_isJoined.value )
+                            println(_isJoined.value)
                             println("joined")
                         }
 
                     }
 
                     else -> {
-                    println("Error $it")
+                        println("Error $it")
                     }
                 }
 
             }
 
 
-        }
-    }
-
-
-    fun receiveChatList(callBack : (String)->Unit){
-        viewModelScope.launch {
-            webSocketManager.chatList {
-                callBack(it.toString())
-            }
         }
     }
 
@@ -118,7 +108,4 @@ class MainViewmodel(
     }
 
 
-    fun testEnum(){
-        webSocketManager.testEnum()
-    }
 }
